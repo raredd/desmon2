@@ -38,3 +38,4 @@ cat(mtd_text(), file = '~/mtd_design.txt')
 Other designs: \code{\link{bin1samp_text}},
   \code{\link{simon_text}}
 }
+\concept{designs}

@@ -13,4 +13,5 @@ License: GPL-2 + file LICENSE
 URL: https://github.com/raredd/desmon2
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+Encoding: UTF-8

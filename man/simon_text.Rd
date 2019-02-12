@@ -53,3 +53,4 @@ cat(simon_text(.3, .5, outcome = 'overall response (OR) rate'),
 Other designs: \code{\link{bin1samp_text}},
   \code{\link{mtd_text}}
 }
+\concept{designs}

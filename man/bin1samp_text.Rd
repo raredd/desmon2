@@ -45,3 +45,4 @@ cat(bin1samp_text(.3, .5, outcome = 'overall response (OR) rate'),
 Other designs: \code{\link{mtd_text}},
   \code{\link{simon_text}}
 }
+\concept{designs}

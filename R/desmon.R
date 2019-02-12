@@ -5,7 +5,7 @@
 
 bin1samp <- function(p0, pa, alpha = .1, beta = .1, n.min = 20) {
   ## desmon::bin1samp
-  if (p0==pa) stop()
+  if (p0==pa) stop('p0 == pa')
   b <- 1
   x <- round(p0*n.min)
   n <- n.min-1

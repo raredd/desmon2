@@ -145,9 +145,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
   
   
   structure(
-    trim(txt),
-    design = call,
-    class = 'stat_text'
+    trim(txt, TRUE), design = call, class = 'stat_text'
   )
 }
 
@@ -247,9 +245,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
   }
   
   structure(
-    trim(txt),
-    table = tbl,
-    class = 'stat_text'
+    trim(txt, TRUE), table = tbl, class = 'stat_text'
   )
 }
 
@@ -422,8 +418,6 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
   
   
   structure(
-    trim(txt),
-    design = call,
-    class = 'stat_text'
+    trim(txt, TRUE), design = call, class = 'stat_text'
   )
 }
