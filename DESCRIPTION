@@ -7,6 +7,8 @@ Authors@R: person("Robert", "Redd", email = "rredd@jimmy.harvard.edu",
 Author: Robert Redd
 Maintainer: Robert Redd <rredd@jimmy.harvard.ed>
 Description: More tools for the design and monitoring of clinical trials.
+Imports:
+    UBCRM
 Suggests:
     knitr
 License: GPL-2 + file LICENSE
