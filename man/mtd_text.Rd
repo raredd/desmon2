@@ -33,7 +33,7 @@ cat(mtd_text(), file = '~/mtd_design.txt')
 
 }
 \seealso{
-\code{\link{dlt_table}}
+\code{\link{dlt_table}}; \code{\link{sim3p3}}
 
 Other designs: \code{\link{bin1samp_text}},
   \code{\link{simon_text}}

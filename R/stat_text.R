@@ -161,7 +161,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
 #' @family designs
 #' 
 #' @seealso
-#' \code{\link{dlt_table}}
+#' \code{\link{dlt_table}}; \code{\link{sim3p3}}
 #' 
 #' @return
 #' A character string describing the design with \code{attr(, "table")}
@@ -206,7 +206,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     'DLTs occur at the current level, the dose will be escalated; if two or more',
     'DLTs occur in the six patients, the previous level is defined as the MTD,',
     'and the dose-escalation phase of the study will stop. No re-escalations',
-    'will occur',
+    'will occur.',
     
     psep,
     
@@ -222,9 +222,9 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     
     psep,
     
-    'The dose-finding phase of the study will enroll between 4 and',
+    'The dose-finding phase of the study will enroll up to',
     ndose * 6,
-    'patients. With at least 3 + ',
+    'patients. With at least 3 +',
     expansion,
     'treated at the MTD, the 95% exact binomial confidence interval for the',
     'observed rate of MTD will be no wider than +/-',
