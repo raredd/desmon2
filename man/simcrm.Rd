@@ -4,7 +4,7 @@
 \alias{simcrm}
 \title{Simulate CRM design}
 \usage{
-simcrm(probs, expansion = 0L, target = 1/3, nptmax = length(probs) *
+simcrm(probs, expansion = 0L, target = 1/6, nptmax = length(probs) *
   6L, ...)
 }
 \arguments{
@@ -36,8 +36,26 @@ Simulate a \link[=simCrm]{CRM} dose-escalation study.
 pr <- 1:5 / 10
 simcrm(pr)
 
-x <- replicate(1000L, simcrm(pr)$level)
-barplot(table(x), xlab = 'RP2D')
+
+## run 1000 crm studies
+sim1 <- replicate(1000L, simcrm(pr), simplify = FALSE)
+
+op <- par(mfrow = c(1, 2), las = 1L)
+out <- sapply(sim1, function(x) c(x$level, x$enrolled))
+barplot(
+  prop.table(table(out[1, ])),
+  main = 'Dose selected',
+  xlab = 'RP2D',
+  ylab = 'Proportion selected'
+)
+boxplot(
+  split(out[2, ], out[1, ]),
+  ylim = c(0, length(pr) * 6 + 10),
+  main = 'N used to select dose x',
+  xlab = 'Dose selected\\n(0 - no safe dose)',
+  ylab = 'Total size'
+)
+par(op)
 
 }
 \seealso{
