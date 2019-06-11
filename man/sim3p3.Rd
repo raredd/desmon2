@@ -4,12 +4,15 @@
 \alias{sim3p3}
 \title{Simulate 3+3 design}
 \usage{
-sim3p3(probs, expansion = 10)
+sim3p3(probs, expansion = 10, escalation = TRUE)
 }
 \arguments{
 \item{probs}{vector of true rates of DLTs}
 
 \item{expansion}{(optional) integer giving size of expansion cohort}
+
+\item{escalation}{logical; if \code{TRUE}, dose-escalation rules are used;
+otherwise, de-escalation rules are used with decreasing \code{probs}}
 }
 \value{
 A list with the following components:
@@ -22,15 +25,56 @@ A list with the following components:
 \item{\code{$enrolled}}{total number of patients enrolled on study}
 }
 \description{
-Simulate a standard 3+3 dose-escalation study.
+Simulate a standard 3+3 dose (de-)escalation study.
 }
 \examples{
 ## standard 3+3 with 10 patient expansion cohort
 pr <- 1:5 / 10
 sim3p3(pr)
 
-x <- replicate(1000L, sim3p3(pr)$level)
-barplot(table(x), xlab = 'RP2D')
+
+## run 1000 3+3 studies
+sim1 <- replicate(1000L, sim3p3(pr), simplify = FALSE)
+
+op <- par(mfrow = c(1, 2), las = 1L)
+out <- sapply(sim1, function(x) c(x$level, x$enrolled))
+barplot(
+  prop.table(table(out[1, ])),
+  main = 'Dose selected',
+  xlab = 'RP2D',
+  ylab = 'Proportion selected'
+)
+boxplot(
+  split(out[2, ], out[1, ]),
+  ylim = c(0, length(pr) * 6 + 10),
+  main = 'N used to select dose x',
+  xlab = 'Dose selected\\n(0 - no safe dose)',
+  ylab = 'Total size'
+)
+par(op)
+
+
+## 3+3 de-escalation, starting at highest dose
+## run 1000 3+3 studies
+pr2 <- rev(pr)
+sim2 <- replicate(1000L, sim3p3(pr2, escalation = FALSE), simplify = FALSE)
+
+op <- par(mfrow = c(1, 2), las = 1L)
+out <- sapply(sim2, function(x) c(x$level, x$enrolled))
+barplot(
+  prop.table(table(out[1, ])),
+  main = 'Dose selected',
+  xlab = 'RP2D',
+  ylab = 'Proportion selected'
+)
+boxplot(
+  split(out[2, ], out[1, ]),
+  ylim = c(0, length(pr) * 6 + 10),
+  main = 'N used to select dose x',
+  xlab = 'Dose selected\\n(0 - no safe dose)',
+  ylab = 'Total size'
+)
+par(op)
 
 }
 \seealso{

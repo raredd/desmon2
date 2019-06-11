@@ -5,10 +5,12 @@
 
 #' Simulate 3+3 design
 #' 
-#' Simulate a standard 3+3 dose-escalation study.
+#' Simulate a standard 3+3 dose (de-)escalation study.
 #' 
 #' @param probs vector of true rates of DLTs
 #' @param expansion (optional) integer giving size of expansion cohort
+#' @param escalation logical; if \code{TRUE}, dose-escalation rules are used;
+#' otherwise, de-escalation rules are used with decreasing \code{probs}
 #' 
 #' @return
 #' A list with the following components:
@@ -28,12 +30,61 @@
 #' pr <- 1:5 / 10
 #' sim3p3(pr)
 #' 
-#' x <- replicate(1000L, sim3p3(pr)$level)
-#' barplot(table(x), xlab = 'RP2D')
+#' 
+#' ## run 1000 3+3 studies
+#' sim1 <- replicate(1000L, sim3p3(pr), simplify = FALSE)
+#' 
+#' op <- par(mfrow = c(1, 2), las = 1L)
+#' out <- sapply(sim1, function(x) c(x$level, x$enrolled))
+#' barplot(
+#'   prop.table(table(out[1, ])),
+#'   main = 'Dose selected',
+#'   xlab = 'RP2D',
+#'   ylab = 'Proportion selected'
+#' )
+#' boxplot(
+#'   split(out[2, ], out[1, ]),
+#'   ylim = c(0, length(pr) * 6 + 10),
+#'   main = 'N used to select dose x',
+#'   xlab = 'Dose selected\n(0 - no safe dose)',
+#'   ylab = 'Total size'
+#' )
+#' par(op)
+#' 
+#' 
+#' ## 3+3 de-escalation, starting at highest dose
+#' ## run 1000 3+3 studies
+#' pr2 <- rev(pr)
+#' sim2 <- replicate(1000L, sim3p3(pr2, escalation = FALSE), simplify = FALSE)
+#' 
+#' op <- par(mfrow = c(1, 2), las = 1L)
+#' out <- sapply(sim2, function(x) c(x$level, x$enrolled))
+#' barplot(
+#'   prop.table(table(out[1, ])),
+#'   main = 'Dose selected',
+#'   xlab = 'RP2D',
+#'   ylab = 'Proportion selected'
+#' )
+#' boxplot(
+#'   split(out[2, ], out[1, ]),
+#'   ylim = c(0, length(pr) * 6 + 10),
+#'   main = 'N used to select dose x',
+#'   xlab = 'Dose selected\n(0 - no safe dose)',
+#'   ylab = 'Total size'
+#' )
+#' par(op)
 #' 
 #' @export
 
-sim3p3 <- function(probs, expansion = 10) {
+sim3p3 <- function(probs, expansion = 10, escalation = TRUE) {
+  if (escalation && !all(diff(order(probs)) == 1L)) {
+    warning('if escalation = TRUE, \'probs\' should be increasing - sorting')
+  } else if (!escalation && !all(diff(order(probs)) == -1L)) {
+    warning('if escalation = FALSE, \'probs\' should be decreasing - sorting')
+  }
+  
+  probs <- sort(probs, decreasing = !escalation)
+  
   ## groups of 3 entered
   grp <- c(3L, 3L)
   npl <- sum(grp)
@@ -48,37 +99,9 @@ sim3p3 <- function(probs, expansion = 10) {
   )
   mat <- matrix(NA, length(probs), sum(c(npl, expansion)), dimnames = dnn)
   
-  idx <- 1L
-  while ((length(probs) + 1L) > idx) {
-    ## dlt indicators for all pts
-    dlt <- rbinom(npl, 1L, probs[idx])
-    
-    ## rules based on first three entered
-    lvl <- sum(dlt[1:3])
-    if (lvl > 1) {
-      ## 2 or 3 dlt -- stop, prev level is mtd
-      mat[idx, 1:3] <- dlt[1:3]
-      idx <- idx - 1L
-      break
-    } else if (lvl == 0) {
-      ## 0 dlt in 3 -- escalate
-      mat[idx, 1:3] <- dlt[1:3]
-      idx <- idx + 1L
-      next
-    } else if (lvl == 1) {
-      ## 1 dlt in 3 -- add 3
-      mat[idx, 1:6] <- dlt
-      if (sum(dlt) > 1) {
-        ## 1 or more dlt in last 3 -- prev level is mtd
-        idx <- idx - 1L
-        break
-      } else {
-        ## no more dlt in last 3 -- escalate
-        idx <- idx + 1L
-        next
-      }
-    }
-  }
+  res <- sim3p3_(probs, !escalation, mat)
+  mat <- res$mat
+  idx <- res$idx
   
   pr_all <- pr_exp <- NA
   idx <- pmin(idx, length(probs))
@@ -97,6 +120,57 @@ sim3p3 <- function(probs, expansion = 10) {
     data = mat, mtd = probs[idx], level = idx, expansion = pr_exp,
     cohort = pr_all, enrolled = length(sort(mat))
   )
+}
+
+sim3p3_ <- function(probs, d, mat, idx = 1L) {
+  ## idx: starting level
+  
+  while ((length(probs) + 1L) > idx) {
+    ## dlt indicators for all pts
+    dlt <- rbinom(6L, 1L, probs[idx])
+    
+    ## rules based on first three entered
+    lvl <- sum(dlt[1:3])
+    if (lvl > 1) {
+      ## 2 or 3 dlt
+      ## d: de-escalate to next level
+      ## e: stop - prev level is mtd
+      mat[idx, 1:3] <- dlt[1:3]
+      idx <- idx + if (d) 1L else -1L
+      if (d)
+        next else break
+    } else if (lvl == 0) {
+      ## 0 dlt in 3
+      ## d: stop - current level is mtd
+      ## e: escalate to next level
+      mat[idx, 1:3] <- dlt[1:3]
+      idx <- if (d)
+        idx else idx + 1L
+      if (d)
+        break else next
+    } else if (lvl == 1) {
+      ## 1 dlt in 3 -- add 3
+      mat[idx, 1:6] <- dlt
+      if (sum(dlt) > 1) {
+        ## 1 or more dlt in last 3
+        #E d: de-escalate to next level
+        ## e: stop - prev level is mtd
+        idx <- idx + if (d) 1L else -1L
+        if (d)
+          next else break
+      } else {
+        ## no more dlt in last 3
+        ## d: stop - current level is mtd
+        ## e: escalate to next level
+        idx <- if (d)
+          idx else idx + 1L
+        if (d)
+          break else next
+      }
+    }
+  }
+  
+  list(mat = mat, idx = idx)
 }
 
 #' Simulate CRM design
@@ -127,12 +201,30 @@ sim3p3 <- function(probs, expansion = 10) {
 #' pr <- 1:5 / 10
 #' simcrm(pr)
 #' 
-#' x <- replicate(1000L, simcrm(pr)$level)
-#' barplot(table(x), xlab = 'RP2D')
+#' 
+#' ## run 1000 crm studies
+#' sim1 <- replicate(1000L, simcrm(pr), simplify = FALSE)
+#' 
+#' op <- par(mfrow = c(1, 2), las = 1L)
+#' out <- sapply(sim1, function(x) c(x$level, x$enrolled))
+#' barplot(
+#'   prop.table(table(out[1, ])),
+#'   main = 'Dose selected',
+#'   xlab = 'RP2D',
+#'   ylab = 'Proportion selected'
+#' )
+#' boxplot(
+#'   split(out[2, ], out[1, ]),
+#'   ylim = c(0, length(pr) * 6 + 10),
+#'   main = 'N used to select dose x',
+#'   xlab = 'Dose selected\n(0 - no safe dose)',
+#'   ylab = 'Total size'
+#' )
+#' par(op)
 #' 
 #' @export
 
-simcrm <- function(probs, expansion = 0L, target = 1/3,
+simcrm <- function(probs, expansion = 0L, target = 1/6,
                    nptmax = length(probs) * 6L, ...) {
   lvl <- paste('dose', seq_along(probs))
   crm <- UBCRM::simCrm(
