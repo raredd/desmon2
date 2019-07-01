@@ -4,25 +4,27 @@
 \alias{bin1pow}
 \title{Power for one-sample exact binomial tests}
 \usage{
-bin1pow(n, pa, r)
+bin1pow(n, p0, pa, r)
 }
 \arguments{
 \item{n}{sample size}
 
-\item{pa}{probability of success under alternative hypothesis}
+\item{p0, pa}{probability of success under the null and alternative
+hypotheses, respectively}
 
 \item{r}{critical value}
 }
 \description{
-Determines the power for a one-sided, one-sample exact binomial test.
+Determines the power and significance level for a one-sided, one-sample
+exact binomial test.
 }
 \examples{
 p0 <- 0.1
 pa <- 0.3
 
 des <- desmon2:::bin1samp(p0, pa)
-1 - des[['type2']]
+des[c('size', 'type2')]
 
-bin1pow(des['n'], pa, des['r'] + 1L)
+bin1pow(des['n'], p0, pa, des['r'] + 1L)
 
 }
