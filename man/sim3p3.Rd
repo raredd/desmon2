@@ -4,7 +4,7 @@
 \alias{sim3p3}
 \title{Simulate 3+3 design}
 \usage{
-sim3p3(probs, expansion = 10, escalation = TRUE)
+sim3p3(probs, expansion = 10, escalation = TRUE, n.max = Inf)
 }
 \arguments{
 \item{probs}{vector of true rates of DLTs}
@@ -13,6 +13,9 @@ sim3p3(probs, expansion = 10, escalation = TRUE)
 
 \item{escalation}{logical; if \code{TRUE}, dose-escalation rules are used;
 otherwise, de-escalation rules are used with decreasing \code{probs}}
+
+\item{n.max}{maximum number of patients available for dose-finding and
+expansion cohorts combined}
 }
 \value{
 A list with the following components:

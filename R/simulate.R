@@ -1,4 +1,4 @@
-### simulate
+### simulate phase 1 designs
 # sim3p3, simcrm
 ### 
 
@@ -11,6 +11,8 @@
 #' @param expansion (optional) integer giving size of expansion cohort
 #' @param escalation logical; if \code{TRUE}, dose-escalation rules are used;
 #' otherwise, de-escalation rules are used with decreasing \code{probs}
+#' @param n.max maximum number of patients available for dose-finding and
+#' expansion cohorts combined
 #' 
 #' @return
 #' A list with the following components:
@@ -76,7 +78,7 @@
 #' 
 #' @export
 
-sim3p3 <- function(probs, expansion = 10, escalation = TRUE) {
+sim3p3 <- function(probs, expansion = 10, escalation = TRUE, n.max = Inf) {
   if (escalation && !all(diff(order(probs)) == 1L)) {
     warning('if escalation = TRUE, \'probs\' should be increasing - sorting')
   } else if (!escalation && !all(diff(order(probs)) == -1L)) {
@@ -103,13 +105,32 @@ sim3p3 <- function(probs, expansion = 10, escalation = TRUE) {
   mat <- res$mat
   idx <- res$idx
   
+  f <- function(matrix, n.max = Inf) {
+    if (is.infinite(n.max))
+      return(matrix)
+    ii <- t(matrix(cumsum(t(+!is.na(matrix))), nrow(matrix), byrow = TRUE))
+    ii <- ii <= n.max & matrix(!duplicated(c(ii)), nrow(ii))
+    matrix <- t(matrix)
+    matrix[!ii] <- NA
+    t(matrix)
+  }
+  
+  ## update tox and dose level based on only n.max patients
+  if (is.finite(n.max)) {
+    mat[, 1:6] <- f(mat[, 1:6], n.max)
+    idx <- rowSums(mat, na.rm = TRUE) < 2 & rowSums(!is.na(mat)) > 0
+    idx <- max(cumsum(idx))
+    expansion <- pmin(expansion, pmax(0, n.max - sum(!is.na(mat))))
+  }
+  
   pr_all <- pr_exp <- NA
   idx <- pmin(idx, length(probs))
   
   ## optional - add expansion cohort at safe dose
   if (idx > 0) {
     expansion <- rbinom(expansion, 1L, probs[idx])
-    mat[idx, -(1:6)] <- expansion
+    len <- ncol(mat) - length(expansion) - 6L
+    mat[idx, -(1:6)] <- c(expansion, rep_len(NA, len))
     ## observed probs for all treated at dose and expansion cohort
     pr_all <- mean(mat[idx, ], na.rm = TRUE)
     if (length(expansion))
