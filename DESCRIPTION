@@ -1,6 +1,6 @@
 Package: desmon2
 Type: Package
-Title: More tools for the design and monitoring of clinical trials.
+Title: More tools for the design and monitoring of clinical trials
 Version: 0.0.0.9000
 Authors@R: person("Robert", "Redd", email = "rredd@jimmy.harvard.edu",
   role = c("aut", "cre"))
@@ -11,7 +11,7 @@ Imports:
     UBCRM
 Suggests:
     knitr
-License: GPL-2 + file LICENSE
+License: file LICENSE
 URL: https://github.com/raredd/desmon2
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr

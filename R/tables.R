@@ -1,4 +1,4 @@
-###
+### probability tables
 # blt_table, dlt_table, pr_table
 ###
 

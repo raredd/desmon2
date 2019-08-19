@@ -1,5 +1,5 @@
 ### desmon extras
-# bin1pow
+# bin1samp_power, twostg_power
 ###
 
 

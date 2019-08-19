@@ -37,8 +37,8 @@ pr <- 1:5 / 10
 simcrm(pr)
 
 
-## run 1000 crm studies
-sim1 <- replicate(1000L, simcrm(pr), simplify = FALSE)
+## run 100 crm studies
+sim1 <- replicate(100L, simcrm(pr), simplify = FALSE)
 
 op <- par(mfrow = c(1, 2), las = 1L)
 out <- sapply(sim1, function(x) c(x$level, x$enrolled))
@@ -59,5 +59,5 @@ par(op)
 
 }
 \seealso{
-\code{\link{simp3p}}
+\code{\link{sim3p3}}
 }

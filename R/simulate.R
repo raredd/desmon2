@@ -1,5 +1,8 @@
 ### simulate phase 1 designs
 # sim3p3, simcrm
+# 
+# unexported:
+# sim3p3_
 ### 
 
 
@@ -216,15 +219,15 @@ sim3p3_ <- function(probs, d, mat, idx = 1L) {
 #' \item{\code{$enrolled}}{total number of patients enrolled on study}
 #' 
 #' @seealso
-#' \code{\link{simp3p}}
+#' \code{\link{sim3p3}}
 #' 
 #' @examples
 #' pr <- 1:5 / 10
 #' simcrm(pr)
 #' 
 #' 
-#' ## run 1000 crm studies
-#' sim1 <- replicate(1000L, simcrm(pr), simplify = FALSE)
+#' ## run 100 crm studies
+#' sim1 <- replicate(100L, simcrm(pr), simplify = FALSE)
 #' 
 #' op <- par(mfrow = c(1, 2), las = 1L)
 #' out <- sapply(sim1, function(x) c(x$level, x$enrolled))
@@ -264,6 +267,6 @@ simcrm <- function(probs, expansion = 0L, target = 1/6,
   exp <- if (expansion > 0)
     mean(rbinom(expansion, 1L, crm$prob[crm$mtd])) else NA
   
-  list(data = crm$data, mtd = pr[crm$mtd], level = crm$mtd,
+  list(data = crm$data, mtd = probs[crm$mtd], level = crm$mtd,
        expansion = exp, cohort = mean(coh), enrolled = size)
 }
