@@ -22,26 +22,28 @@ are found}
 instance, and only the text in parens is used subsequently}
 }
 \value{
-A character string describing the Simon design with \code{attr(, "simon")}
-containing the designs.
+A character string describing the Simon design with
+\code{attr(, "design")} containing the designs.
 }
 \description{
 Output Simon two-stage design text.
 }
 \examples{
 ## basic usage
-simon_text(.3, .5)
+p0 <- 0.3
+pa <- 0.5
+simon_text(p0, pa)
 
 ## select a different design
-simon_text(.3, .5, which = 2)
+simon_text(p0, pa, which = 2)
 
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing
-cat(strwrap(simon_text(.3, .5), width = 80), sep = '\\n')
+cat(strwrap(simon_text(p0, pa), width = 80), sep = '\\n')
 
-cat(simon_text(.3, .5), file = '~/simon_design.txt')
+cat(simon_text(p0, pa), file = '~/simon_design.txt')
 
-cat(simon_text(.3, .5, outcome = 'overall response (OR) rate'),
+cat(simon_text(p0, pa, outcome = 'overall response (OR) rate'),
     file = '~/simon_design2.txt')
 }
 
@@ -50,7 +52,8 @@ cat(simon_text(.3, .5, outcome = 'overall response (OR) rate'),
 \code{\link[desmon]{simon}}; \code{\link[desmon]{twostg}};
 \code{\link[desmon]{twocon}}; \code{\link[desmon]{binci}}
 
-Other designs: \code{\link{bin1samp_text}},
-  \code{\link{mtd_text}}
+Other designs: \code{\link{b2p_text}},
+  \code{\link{bin1samp_text}}, \code{\link{mtd_text}},
+  \code{\link{twostg_text}}
 }
 \concept{designs}

@@ -35,7 +35,8 @@ cat(mtd_text(), file = '~/mtd_design.txt')
 \seealso{
 \code{\link{dlt_table}}; \code{\link{sim3p3}}
 
-Other designs: \code{\link{bin1samp_text}},
-  \code{\link{simon_text}}
+Other designs: \code{\link{b2p_text}},
+  \code{\link{bin1samp_text}}, \code{\link{simon_text}},
+  \code{\link{twostg_text}}
 }
 \concept{designs}

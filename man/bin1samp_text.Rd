@@ -14,8 +14,8 @@ bin1samp_text(p0, pa, ..., conf = 0.95, outcome = "OUTCOME (OUT)")
 \item{conf}{confidence level for confidence intervals}
 
 \item{outcome}{text string describing the outcome; if a string such as
-\code{"long desc (abbr)"} is given, then entire string is used in the first
-instance, and only the text in parens is used subsequently}
+\code{"long description (abbr)"} is given, then entire string is used in
+the first instance, and only the text in parens is used subsequently}
 }
 \value{
 A character string describing the design with \code{attr(, "design")}
@@ -42,7 +42,8 @@ cat(bin1samp_text(.3, .5, outcome = 'overall response (OR) rate'),
 \seealso{
 \code{\link[desmon]{bin1samp}}; \code{\link[desmon]{binci}}
 
-Other designs: \code{\link{mtd_text}},
-  \code{\link{simon_text}}
+Other designs: \code{\link{b2p_text}},
+  \code{\link{mtd_text}}, \code{\link{simon_text}},
+  \code{\link{twostg_text}}
 }
 \concept{designs}
