@@ -119,7 +119,6 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
     sprintf('%.3f.', 1 - args$type2)
   )
   
-  
   structure(
     trim(txt, TRUE), design = call, class = 'stat_text'
   )
@@ -349,7 +348,6 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     sprintf('%.3f.', pastg[2L])
   )
   
-  
   structure(
     trim(txt, TRUE), design = call, class = 'stat_text'
   )
@@ -487,7 +485,6 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     sprintf('%.3f.', pastg[2L])
   )
   
-  
   structure(
     trim(txt, TRUE), design = args, class = 'stat_text'
   )
@@ -508,10 +505,6 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
 #' \code{\link[desmon]{b2p}}
 #' @param cont.cor logical; if \code{TRUE} (default), the sample size will be
 #' calculated for the continuity corrected statistic
-#' @param conf confidence level for single- and two-stage confidence intervals
-#' @param outcome text string describing the outcome; if a string such as
-#' \code{"long description (abbr)"} is given, then entire string is used in
-#' the first instance, and only the text in parens is used subsequently
 #' 
 #' @family designs
 #' 
@@ -561,8 +554,9 @@ b2p_text <- function(p1, p2, n1 = NULL, n2 = n1,
   
   r2 <- c(r, 1 - r)
   r2 <- r2 / min(r2)
+  or <- p1 * (1 - p2) / (p2 * (1 - p1))
   
-  args <- list(p1 = p1, p2 = p2, n1 = n1, n2 = n2, power = power,
+  args <- list(p1 = p1, p2 = p2, n1 = n1, n2 = n2, power = power, or = or,
                alpha = alpha, r = r, r2 = r2, type = type, test = test)
   
   if (is.null(power)) {
@@ -578,22 +572,22 @@ b2p_text <- function(p1, p2, n1 = NULL, n2 = n1,
   txt <- paste(
     'Patients will be randomly assigned', paste(r2, collapse = ':'),
     'to the', paste(arms, collapse = ' or '), 'arms.',
-    'The success rates for are assumed to be', p1, 'and', p2, 'for the',
+    'The success rates for are assumed to be', p1, 'and', p2,
+    sprintf('(odds ratio of %.3f)', args$or), 'for the',
     paste(arms, collapse = ' and '), 'arms, respectively.',
     
     psep,
     
     'With', args$n1, 'and', args$n2, 'assigned to each arm, there will be',
-    'at least', sprintf('%.2f', args$power), 'power',
+    'at least', sprintf('%.3f', args$power), 'power',
     sprintf('(%s)', args$test), 'with a one-sided',
-    sprintf('%.2f', args$alpha), 'significance level.',
+    sprintf('%.3f', args$alpha), 'significance level.',
     
     psep,
     
     'The overall sample size will be', args$n1 + args$n2, 'with', args$n1,
     'on the', arms[1L], 'arm and', args$n2, 'on the', arms[2L], 'arm.'
   )
-  
   
   structure(
     trim(txt, TRUE), design = args, class = 'stat_text'

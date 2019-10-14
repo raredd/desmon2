@@ -24,12 +24,6 @@ b2p_text(p1, p2, n1 = NULL, n2 = n1, power = NULL, alpha = 0.025,
 
 \item{cont.cor}{logical; if \code{TRUE} (default), the sample size will be
 calculated for the continuity corrected statistic}
-
-\item{conf}{confidence level for single- and two-stage confidence intervals}
-
-\item{outcome}{text string describing the outcome; if a string such as
-\code{"long description (abbr)"} is given, then entire string is used in
-the first instance, and only the text in parens is used subsequently}
 }
 \value{
 A character string describing the two-stage design with
