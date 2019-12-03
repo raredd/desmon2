@@ -51,7 +51,7 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' 
 #' @examples
 #' ## basic usage
-#' bin1samp_text(.3, .5)
+#' bin1samp_text(0.3, 0.5)
 #' 
 #' \dontrun{
 #' ## use cat and/or strwrap for improved formatting and writing
@@ -101,7 +101,10 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', args$n,
     'patients, the single-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than +/-', sprintf('%s%%.', round(max(onewid) * 100)),
+    'will be no wider than',
+    if (args$n %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(onewid) * 100))
+    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
     
     psep,
     
@@ -144,7 +147,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
 #' 
 #' @examples
 #' ## basic usage
-#' cat(mtd_text())
+#' mtd_text()
 #' cat(mtd_text(1:10 / 20, 5, 15))
 #' 
 #' \dontrun{
@@ -158,8 +161,8 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
   ndose <- ndose[1L]
   
   bin <- Vectorize(binci)
-  ciw <- 3 + expansion
-  ciw <- apply(bin(seq.int(ciw), ciw), 2L, diff) / 2
+  cin <- 3 + expansion
+  ciw <- apply(bin(seq.int(cin), cin), 2L, diff) / 2
   
   psep <- '\n\n'
   
@@ -200,8 +203,10 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     'The dose-finding phase of the study will enroll up to', ndose * 6,
     'patients over', ndose, 'dose levels. With at least 3 +', expansion,
     'treated at the MTD, the 95% exact binomial confidence interval for the',
-    'observed rate of DLTs will be no wider than +/-',
-    sprintf('%s%%.', round(max(ciw) * 100))
+    'observed rate of DLTs will be no wider than',
+    if (cin %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(ciw) * 100))
+    else sprintf(' %s%%.', round(max(ciw) * 100 * 2))
   )
   
   if (!is.null(prob)) {
@@ -326,7 +331,10 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
     'patients, the two-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than +/-', sprintf('%s%%.', round(max(twowid) * 100)),
+    'will be no wider than',
+    if (total %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(twowid) * 100))
+    else sprintf(' %s%%.', round(max(twowid) * 100 * 2)),
     
     psep,
     
@@ -337,7 +345,10 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
     sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
-    'will be no wider than +/-', sprintf('%s%%.', round(max(onewid) * 100)),
+    'will be no wider than',
+    if (args$n1 %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(onewid) * 100))
+    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
     
     psep,
     
@@ -463,7 +474,10 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
     'patients, the two-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than +/-', sprintf('%s%%.', round(max(twowid) * 100)),
+    'will be no wider than',
+    if (total %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(twowid) * 100))
+    else sprintf(' %s%%.', round(max(twowid) * 100 * 2)),
     
     psep,
     
@@ -474,7 +488,10 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
     sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
-    'will be no wider than +/-', sprintf('%s%%.', round(max(onewid) * 100)),
+    'will be no wider than',
+    if (args$n1 %% 2L == 0L)
+      sprintf(' +/-%s%%.', round(max(onewid) * 100))
+    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
     
     psep,
     

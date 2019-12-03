@@ -26,7 +26,7 @@ Output one-sided, one-sample, single-stage exact binomial design text.
 }
 \examples{
 ## basic usage
-bin1samp_text(.3, .5)
+bin1samp_text(0.3, 0.5)
 
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing

@@ -24,7 +24,7 @@ Output standard 3+3 maximum tolerated dose design text.
 }
 \examples{
 ## basic usage
-cat(mtd_text())
+mtd_text()
 cat(mtd_text(1:10 / 20, 5, 15))
 
 \dontrun{
