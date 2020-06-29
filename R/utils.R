@@ -1,6 +1,4 @@
 ### utils
-# 
-# 
 # unexported:
 # trim, trim2
 ###
