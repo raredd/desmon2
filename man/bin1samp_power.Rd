@@ -52,5 +52,5 @@ bin1samp_sim(p0, pa, des['n'])
 
 }
 \seealso{
-\code{\link{twostg_power}}
+\code{\link{twostg_power}}; \code{\link{twostg_sim}}
 }

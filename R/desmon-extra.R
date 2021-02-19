@@ -1,5 +1,5 @@
 ### desmon extras
-# bin1samp_power, twostg_power
+# bin1samp_power, bin1samp_sim, twostg_power, twostg_sim
 ###
 
 
@@ -29,7 +29,7 @@
 #' \item{\code{type2}}{the overall type-II errors}
 #' 
 #' @seealso
-#' \code{\link{twostg_power}}
+#' \code{\link{twostg_power}}; \code{\link{twostg_sim}}
 #' 
 #' @examples
 #' p0 <- 0.1
@@ -90,7 +90,7 @@ bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
 #' plotted for each combination of (valid) \code{r1} and \code{r2} values
 #' 
 #' @return
-#' A vector with the following elements:
+#' \code{twostg_power} returns vector with the following elements:
 #' 
 #' \item{\code{Pr.stop1.H0}}{probability of stopping after the first stage
 #' if \code{p0} is true}
@@ -101,8 +101,14 @@ bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
 #' \item{\code{E.tot.n.H0}}{expected total sample size if \code{p0} is true}
 #' \item{\code{E.tot.n.H1}}{expected total sample size if \code{pa} is true}
 #' 
+#' \code{twostg_sim} returns a data frame with columns for each of the above
+#' plus the following:
+#' 
+#' \item{\code{r1}}{critical values for the first stage}
+#' \item{\code{r2}}{critical values for the second stage}
+#' 
 #' @seealso
-#' \code{\link{bin1samp_power}}
+#' \code{\link{bin1samp_power}}; \code{\link{bin1samp_sim}}
 #' 
 #' @examples
 #' p0 <- 0.1

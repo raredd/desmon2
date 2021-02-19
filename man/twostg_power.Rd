@@ -22,7 +22,7 @@ treatment is declared ineffective}
 plotted for each combination of (valid) \code{r1} and \code{r2} values}
 }
 \value{
-A vector with the following elements:
+\code{twostg_power} returns vector with the following elements:
 
 \item{\code{Pr.stop1.H0}}{probability of stopping after the first stage
 if \code{p0} is true}
@@ -32,6 +32,12 @@ if \code{pa} is true}
 \item{\code{type2}}{the overall type-II error}
 \item{\code{E.tot.n.H0}}{expected total sample size if \code{p0} is true}
 \item{\code{E.tot.n.H1}}{expected total sample size if \code{pa} is true}
+
+\code{twostg_sim} returns a data frame with columns for each of the above
+plus the following:
+
+\item{\code{r1}}{critical values for the first stage}
+\item{\code{r2}}{critical values for the second stage}
 }
 \description{
 Determines the operating characteristics of single-arm, two-stage designs.
@@ -64,5 +70,5 @@ with(res, {
 
 }
 \seealso{
-\code{\link{bin1samp_power}}
+\code{\link{bin1samp_power}}; \code{\link{bin1samp_sim}}
 }
