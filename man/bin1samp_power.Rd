@@ -2,9 +2,12 @@
 % Please edit documentation in R/desmon-extra.R
 \name{bin1samp_power}
 \alias{bin1samp_power}
+\alias{bin1samp_sim}
 \title{Power for one-sample exact binomial designs}
 \usage{
 bin1samp_power(p0, pa, n, r)
+
+bin1samp_sim(p0, pa, n, r = seq.int(n), plot = TRUE)
 }
 \arguments{
 \item{p0, pa}{probability of success under the null and alternative
@@ -12,13 +15,23 @@ hypotheses, respectively}
 
 \item{n}{sample size}
 
-\item{r}{critical value}
+\item{r}{for \code{bin1samp_power}, a single critical value; for
+\code{bin1samp_sim}, a vector of critical values}
+
+\item{plot}{logical; if \code{TRUE}, a the sequence of \code{r} versus
+type-I and type-II errors is plotted}
 }
 \value{
-A vector with the following elements:
+\code{bin1samp_power} returns a vector with the following elements:
 
 \item{\code{type1}}{the overall type-I error}
 \item{\code{type2}}{the overall type-II error}
+
+\code{bin1samp_sim} returns a data frame with the following columns:
+
+\item{\code{r}}{critical values}
+\item{\code{type1}}{the overall type-I errors}
+\item{\code{type2}}{the overall type-II errors}
 }
 \description{
 Determines the power and significance level for a one-sided, one-sample
@@ -28,11 +41,14 @@ exact binomial test.
 p0 <- 0.1
 pa <- 0.3
 des <- desmon2:::bin1samp(p0, pa)
-
 bin1samp_power(p0, pa, des['n'], des['r'] + 1L)
 
 ## compare
 des[c('size', 'type2')]
+
+
+## simulate over critical values
+bin1samp_sim(p0, pa, des['n'])
 
 }
 \seealso{

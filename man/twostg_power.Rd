@@ -2,9 +2,12 @@
 % Please edit documentation in R/desmon-extra.R
 \name{twostg_power}
 \alias{twostg_power}
+\alias{twostg_sim}
 \title{Power for two-stage designs}
 \usage{
 twostg_power(p0, pa, n1, n2, r1, r2)
+
+twostg_sim(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n2), plot = TRUE)
 }
 \arguments{
 \item{p0, pa}{probability of success under the null and alternative
@@ -14,6 +17,9 @@ hypotheses, respectively}
 
 \item{r1, r2}{maximum number of responses in first stage and overall where
 treatment is declared ineffective}
+
+\item{plot}{logical; if \code{TRUE}, the type-I and type-II errors are
+plotted for each combination of (valid) \code{r1} and \code{r2} values}
 }
 \value{
 A vector with the following elements:
@@ -34,11 +40,27 @@ Determines the operating characteristics of single-arm, two-stage designs.
 p0 <- 0.1
 pa <- 0.3
 des <- desmon2:::simon(p0, pa)$designs[1L, ]
-
 twostg_power(p0, pa, des[['n1']], des[['n2']], des[['r1']], des[['r2']])
 
 ## compare
 des
+
+
+## simulate over critical values
+twostg_sim(p0, pa, des[['n1']], des[['n2']])
+
+\dontrun{
+res <- twostg_sim(p0, pa, des[['n1']], des[['n2']])
+with(res, {
+  iplotr::iscatter(
+    type1, type2, group = type1 < 0.1 & type2 < 0.2,
+    labels = list(
+      r1 = r1, r2 = r2,
+      alpha = round(type1, 3), power = round(1 - type2, 3)
+    )
+  )
+})
+}
 
 }
 \seealso{

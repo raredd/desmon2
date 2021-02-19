@@ -11,13 +11,22 @@
 #' @param p0,pa probability of success under the null and alternative
 #' hypotheses, respectively
 #' @param n sample size
-#' @param r critical value
+#' @param r for \code{bin1samp_power}, a single critical value; for
+#' \code{bin1samp_sim}, a vector of critical values
+#' @param plot logical; if \code{TRUE}, a the sequence of \code{r} versus
+#' type-I and type-II errors is plotted
 #' 
 #' @return
-#' A vector with the following elements:
+#' \code{bin1samp_power} returns a vector with the following elements:
 #' 
 #' \item{\code{type1}}{the overall type-I error}
 #' \item{\code{type2}}{the overall type-II error}
+#' 
+#' \code{bin1samp_sim} returns a data frame with the following columns:
+#' 
+#' \item{\code{r}}{critical values}
+#' \item{\code{type1}}{the overall type-I errors}
+#' \item{\code{type2}}{the overall type-II errors}
 #' 
 #' @seealso
 #' \code{\link{twostg_power}}
@@ -26,11 +35,14 @@
 #' p0 <- 0.1
 #' pa <- 0.3
 #' des <- desmon2:::bin1samp(p0, pa)
-#' 
 #' bin1samp_power(p0, pa, des['n'], des['r'] + 1L)
 #' 
 #' ## compare
 #' des[c('size', 'type2')]
+#' 
+#' 
+#' ## simulate over critical values
+#' bin1samp_sim(p0, pa, des['n'])
 #' 
 #' @export
 
@@ -49,6 +61,22 @@ bin1samp_power <- function(p0, pa, n, r) {
   c(type1 = bin1pow_(n, p0, r), type2 = 1 - bin1pow_(n, pa, r))
 }
 
+#' @rdname bin1samp_power
+#' @export
+bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
+  res <- sapply(r, function(x) {
+    bin1samp_power(p0, pa, n, x)
+  })
+  res <- data.frame(r = r, t(res))
+  
+  if (plot) {
+    matplot(r, res[, -1L], type = 'l', las = 1L, ylab = 'Error probability')
+    legend('right', col = 1:2, lty = 1:2, legend = paste('Type', c('I', 'II')))
+  }
+  
+  res
+}
+
 #' Power for two-stage designs
 #' 
 #' Determines the operating characteristics of single-arm, two-stage designs.
@@ -58,6 +86,8 @@ bin1samp_power <- function(p0, pa, n, r) {
 #' @param n1,n2 sample size of first and second stage
 #' @param r1,r2 maximum number of responses in first stage and overall where
 #' treatment is declared ineffective
+#' @param plot logical; if \code{TRUE}, the type-I and type-II errors are
+#' plotted for each combination of (valid) \code{r1} and \code{r2} values
 #' 
 #' @return
 #' A vector with the following elements:
@@ -78,11 +108,27 @@ bin1samp_power <- function(p0, pa, n, r) {
 #' p0 <- 0.1
 #' pa <- 0.3
 #' des <- desmon2:::simon(p0, pa)$designs[1L, ]
-#' 
 #' twostg_power(p0, pa, des[['n1']], des[['n2']], des[['r1']], des[['r2']])
 #' 
 #' ## compare
 #' des
+#' 
+#' 
+#' ## simulate over critical values
+#' twostg_sim(p0, pa, des[['n1']], des[['n2']])
+#' 
+#' \dontrun{
+#' res <- twostg_sim(p0, pa, des[['n1']], des[['n2']])
+#' with(res, {
+#'   iplotr::iscatter(
+#'     type1, type2, group = type1 < 0.1 & type2 < 0.2,
+#'     labels = list(
+#'       r1 = r1, r2 = r2,
+#'       alpha = round(type1, 3), power = round(1 - type2, 3)
+#'     )
+#'   )
+#' })
+#' }
 #' 
 #' @export
 
@@ -103,4 +149,25 @@ twostg_power <- function(p0, pa, n1, n2, r1, r2) {
     type1 = 1 - nul[[1L]], type2 = alt[[1L]],
     E.tot.n.H0 = n1 + n2 * (1 - nul[[2L]]),
     E.tot.n.H1 = n1 + n2 * (1 - alt[[2L]]))
+}
+
+#' @rdname twostg_power
+#' @export
+twostg_sim <- function(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n2),
+                       plot = TRUE) {
+  exp <- expand.grid(r1 = r1, r2 = r2)
+  exp <- exp[exp[, 2L] > exp[, 1L] & n1 > exp[, 1L] & n2 > exp[, 2L], ]
+  res <- Map(twostg_power, p0, pa, n1, n2, exp[, 1L], exp[, 2L])
+  res <- data.frame(do.call('rbind', res), r1 = exp[, 1L], r2 = exp[, 2L])
+  
+  if (plot) {
+    grp <- (res$type1 < 0.1 & res$type2 < 0.2) + 1L
+    plot(type2 ~ type1, res, las = 1L, col = grp, pch = c(1L, 16L)[grp])
+    legend(
+      'topright', col = 2L, pch = 16L,
+      legend = expression(alpha < 0.1 ~ power > 0.8)
+    )
+  }
+  
+  res
 }
