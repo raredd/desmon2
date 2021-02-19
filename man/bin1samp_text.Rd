@@ -30,7 +30,7 @@ bin1samp_text(0.3, 0.5)
 
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing
-cat(strwrap(bin1samp_text(.3, .5), width = 80), sep = '\\n')
+cat(strwrap(bin1samp_text(.3, .5), width = 80), sep = '\n')
 
 cat(bin1samp_text(.3, .5), file = '~/bin1samp_design.txt')
 
@@ -42,8 +42,10 @@ cat(bin1samp_text(.3, .5, outcome = 'overall response (OR) rate'),
 \seealso{
 \code{\link[desmon]{bin1samp}}; \code{\link[desmon]{binci}}
 
-Other designs: \code{\link{b2p_text}},
-  \code{\link{mtd_text}}, \code{\link{simon_text}},
-  \code{\link{twostg_text}}
+Other designs: 
+\code{\link{b2p_text}()},
+\code{\link{mtd_text}()},
+\code{\link{simon_text}()},
+\code{\link{twostg_text}()}
 }
 \concept{designs}

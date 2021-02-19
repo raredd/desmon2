@@ -4,8 +4,7 @@
 \alias{blt_table}
 \title{BLT table}
 \usage{
-blt_table(r, n, prior = c(1, 1)/2, alpha = 0.025, cval = 1/3,
-  digits = 2L)
+blt_table(r, n, prior = c(1, 1)/2, alpha = 0.025, cval = 1/3, digits = 2L)
 }
 \arguments{
 \item{r, n}{number of DLTs observed and total size}

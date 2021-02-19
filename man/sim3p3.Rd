@@ -51,7 +51,7 @@ boxplot(
   split(out[2, ], out[1, ]),
   ylim = c(0, length(pr) * 6 + 10),
   main = 'N used to select dose x',
-  xlab = 'Dose selected\\n(0 - no safe dose)',
+  xlab = 'Dose selected\n(0 - no safe dose)',
   ylab = 'Total size'
 )
 par(op)
@@ -74,7 +74,7 @@ boxplot(
   split(out[2, ], out[1, ]),
   ylim = c(0, length(pr) * 6 + 10),
   main = 'N used to select dose x',
-  xlab = 'Dose selected\\n(0 - no safe dose)',
+  xlab = 'Dose selected\n(0 - no safe dose)',
   ylab = 'Total size'
 )
 par(op)

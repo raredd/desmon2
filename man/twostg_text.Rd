@@ -4,8 +4,7 @@
 \alias{twostg_text}
 \title{Two-stage design text}
 \usage{
-twostg_text(p0, pa, n1, n2, r1, r2, conf = 0.95,
-  outcome = "OUTCOME (OUT)")
+twostg_text(p0, pa, n1, n2, r1, r2, conf = 0.95, outcome = "OUTCOME (OUT)")
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}
@@ -39,7 +38,7 @@ twostg_text(p0, pa, s$n1, s$n2, s$r1, s$r2)
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing
 cat(strwrap(twostg_text(p0, pa, s$n1, s$n2, s$r1, s$r2), width = 80),
-    sep = '\\n')
+    sep = '\n')
 
 cat(twostg_text(p0, pa, s$n1, s$n2, s$r1, s$r2),
     file = '~/simon_design.txt')
@@ -55,8 +54,10 @@ cat(twostg_text(p0, pa, s$n1, s$n2, s$r1, s$r2,
 \code{\link[desmon]{twostg}}; \code{\link[desmon]{twocon}};
 \code{\link[desmon]{binci}}
 
-Other designs: \code{\link{b2p_text}},
-  \code{\link{bin1samp_text}}, \code{\link{mtd_text}},
-  \code{\link{simon_text}}
+Other designs: 
+\code{\link{b2p_text}()},
+\code{\link{bin1samp_text}()},
+\code{\link{mtd_text}()},
+\code{\link{simon_text}()}
 }
 \concept{designs}

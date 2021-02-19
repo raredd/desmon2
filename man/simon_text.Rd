@@ -4,8 +4,7 @@
 \alias{simon_text}
 \title{Simon design text}
 \usage{
-simon_text(p0, pa, ..., conf = 0.95, which = 1L,
-  outcome = "OUTCOME (OUT)")
+simon_text(p0, pa, ..., conf = 0.95, which = 1L, outcome = "OUTCOME (OUT)")
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}
@@ -39,7 +38,7 @@ simon_text(p0, pa, which = 2)
 
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing
-cat(strwrap(simon_text(p0, pa), width = 80), sep = '\\n')
+cat(strwrap(simon_text(p0, pa), width = 80), sep = '\n')
 
 cat(simon_text(p0, pa), file = '~/simon_design.txt')
 
@@ -52,8 +51,10 @@ cat(simon_text(p0, pa, outcome = 'overall response (OR) rate'),
 \code{\link[desmon]{simon}}; \code{\link[desmon]{twostg}};
 \code{\link[desmon]{twocon}}; \code{\link[desmon]{binci}}
 
-Other designs: \code{\link{b2p_text}},
-  \code{\link{bin1samp_text}}, \code{\link{mtd_text}},
-  \code{\link{twostg_text}}
+Other designs: 
+\code{\link{b2p_text}()},
+\code{\link{bin1samp_text}()},
+\code{\link{mtd_text}()},
+\code{\link{twostg_text}()}
 }
 \concept{designs}

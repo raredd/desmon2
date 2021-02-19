@@ -4,9 +4,18 @@
 \alias{b2p_text}
 \title{Two-proportion design text}
 \usage{
-b2p_text(p1, p2, n1 = NULL, n2 = n1, power = NULL, alpha = 0.025,
-  r = 0.5, arms = c("Experimental", "Control"), type = c("fisher",
-  "UMPU", "approx.cor", "approx.unc"), cont.cor = TRUE)
+b2p_text(
+  p1,
+  p2,
+  n1 = NULL,
+  n2 = n1,
+  power = NULL,
+  alpha = 0.025,
+  r = 0.5,
+  arms = c("Experimental", "Control"),
+  type = c("fisher", "UMPU", "approx.cor", "approx.unc"),
+  cont.cor = TRUE
+)
 }
 \arguments{
 \item{p1, p2}{the success rates for both groups (\code{p1 > p2})}
@@ -45,7 +54,7 @@ b2p_text(p1, p2, power = 0.8, r = 2/3)
 
 \dontrun{
 ## use cat and/or strwrap for improved formatting and writing
-cat(strwrap(b2p_text(p1, p2, power = 0.8), width = 80), sep = '\\n')
+cat(strwrap(b2p_text(p1, p2, power = 0.8), width = 80), sep = '\n')
 
 cat(b2p_text(p1, p2, power = 0.8), file = '~/simon_design.txt')
 }
@@ -54,8 +63,10 @@ cat(b2p_text(p1, p2, power = 0.8), file = '~/simon_design.txt')
 \seealso{
 \code{\link[desmon]{b2p}}; \code{\link[desmon]{b2n}}
 
-Other designs: \code{\link{bin1samp_text}},
-  \code{\link{mtd_text}}, \code{\link{simon_text}},
-  \code{\link{twostg_text}}
+Other designs: 
+\code{\link{bin1samp_text}()},
+\code{\link{mtd_text}()},
+\code{\link{simon_text}()},
+\code{\link{twostg_text}()}
 }
 \concept{designs}

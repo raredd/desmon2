@@ -4,8 +4,7 @@
 \alias{simcrm}
 \title{Simulate CRM design}
 \usage{
-simcrm(probs, expansion = 0L, target = 1/6, nptmax = length(probs) *
-  6L, ...)
+simcrm(probs, expansion = 0L, target = 1/6, nptmax = length(probs) * 6L, ...)
 }
 \arguments{
 \item{probs}{vector of true rates of DLTs}
@@ -52,7 +51,7 @@ boxplot(
   split(out[2, ], out[1, ]),
   ylim = c(0, length(pr) * 6 + 10),
   main = 'N used to select dose x',
-  xlab = 'Dose selected\\n(0 - no safe dose)',
+  xlab = 'Dose selected\n(0 - no safe dose)',
   ylab = 'Total size'
 )
 par(op)
