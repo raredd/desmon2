@@ -77,7 +77,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
   
   onewid <- sapply(seq.int(args$n), function(x) {
     ci <- binci(x, args$n, conf = conf)
-    unname(diff(ci[1:2]) / 2)
+    unname(diff(ci[1:2]))
   })
   
   txt <- paste(
@@ -101,10 +101,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', args$n,
     'patients, the single-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than',
-    if (args$n %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(onewid) * 100))
-    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
+    'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
     
@@ -162,7 +159,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
   
   bin <- Vectorize(binci)
   cin <- 3 + expansion
-  ciw <- apply(bin(seq.int(cin), cin), 2L, diff) / 2
+  ciw <- apply(bin(seq.int(cin), cin), 2L, diff)
   
   psep <- '\n\n'
   
@@ -204,9 +201,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     'patients over', ndose, 'dose levels. With at least 3 +', expansion,
     'treated at the MTD, the 95% exact binomial confidence interval for the',
     'observed rate of DLTs will be no wider than',
-    if (cin %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(ciw) * 100))
-    else sprintf(' %s%%.', round(max(ciw) * 100 * 2))
+    sprintf(' %s%%.', round(max(ciw) * 100))
   )
   
   if (!is.null(prob)) {
@@ -288,11 +283,11 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
   
   onewid <- sapply(seq.int(args$n1), function(x) {
     ci <- binci(x, args$n1, conf = conf)
-    unname(diff(ci[1:2]) / 2)
+    unname(diff(ci[1:2]))
   })
   twowid <- sapply(seq(args$r1 + 1L, total), function(x) {
     ci <- twocon(args$n1, args$n2, args$r1, x, conf = conf)
-    unname(diff(ci[1:2]) / 2)
+    unname(diff(ci[1:2]))
   })
   
   p0stg <- twostg(args$n1, args$n2, p0, args$r1, args$r2)$prob
@@ -331,10 +326,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
     'patients, the two-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than',
-    if (total %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(twowid) * 100))
-    else sprintf(' %s%%.', round(max(twowid) * 100 * 2)),
+    'will be no wider than', sprintf(' %s%%.', round(max(twowid) * 100)),
     
     psep,
     
@@ -345,10 +337,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
     sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
-    'will be no wider than',
-    if (args$n1 %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(onewid) * 100))
-    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
+    'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
     
@@ -434,11 +423,11 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
   
   onewid <- sapply(seq.int(args$n1), function(x) {
     ci <- binci(x, args$n1, conf = conf)
-    unname(diff(ci[1:2]) / 2)
+    unname(diff(ci[1:2]))
   })
   twowid <- sapply(seq(args$r1 + 1L, total), function(x) {
     ci <- twocon(args$n1, args$n2, args$r1, x, conf = conf)
-    unname(diff(ci[1:2]) / 2)
+    unname(diff(ci[1:2]))
   })
   
   
@@ -474,10 +463,7 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
     'patients, the two-stage exact 95% confidence interval for', outcome2,
-    'will be no wider than',
-    if (total %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(twowid) * 100))
-    else sprintf(' %s%%.', round(max(twowid) * 100 * 2)),
+    'will be no wider than', sprintf(' %s%%.', round(max(twowid) * 100)),
     
     psep,
     
@@ -488,10 +474,7 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
     sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
-    'will be no wider than',
-    if (args$n1 %% 2L == 0L)
-      sprintf(' +/-%s%%.', round(max(onewid) * 100))
-    else sprintf(' %s%%.', round(max(onewid) * 100 * 2)),
+    'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
     
