@@ -74,7 +74,7 @@ blt_table <- function(r, n, prior = c(1, 1) / 2, alpha = 0.025,
 #' 
 #' @export
 
-dlt_table <- function(prob, digits = 2L) {
+dlt_table <- function(prob, digits = getOption('digits')) {
   res <- sapply(prob, function(pr) {
     dbinom(0L, 3L, pr) + dbinom(0L, 3L, pr) * dbinom(1L, 3L, pr)
   })
@@ -84,10 +84,7 @@ dlt_table <- function(prob, digits = 2L) {
     'Pr(Escalation)' = res
   )
   
-  fmt <- sprintf('%%.%sf', digits)
-  res[] <- sprintf(fmt, res)
-  
-  res
+  round(res, digits)
 }
 
 #' Probability table
@@ -124,7 +121,7 @@ dlt_table <- function(prob, digits = 2L) {
 #' 
 #' @export
 
-pr_table <- function(prob, n, crit, greater = FALSE, digits = 2L) {
+pr_table <- function(prob, n, crit, greater = FALSE, digits = getOption('digits')) {
   n <- as.integer(n)
   crit <- c(0L, sequence(max(as.integer(crit - greater))))
   
@@ -143,8 +140,5 @@ pr_table <- function(prob, n, crit, greater = FALSE, digits = 2L) {
     dimnames = list(nn, NULL)
   )
   
-  fmt <- sprintf('%%.%sf', digits)
-  res[] <- sprintf(fmt, res)
-  
-  res
+  round(res, digits)
 }

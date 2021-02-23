@@ -4,7 +4,7 @@
 \alias{dlt_table}
 \title{DLT table}
 \usage{
-dlt_table(prob, digits = 2L)
+dlt_table(prob, digits = getOption("digits"))
 }
 \arguments{
 \item{prob}{a vector of probabilities for event}

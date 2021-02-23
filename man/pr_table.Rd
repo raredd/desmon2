@@ -4,7 +4,7 @@
 \alias{pr_table}
 \title{Probability table}
 \usage{
-pr_table(prob, n, crit, greater = FALSE, digits = 2L)
+pr_table(prob, n, crit, greater = FALSE, digits = getOption("digits"))
 }
 \arguments{
 \item{prob}{a vector of probabilities for event}
