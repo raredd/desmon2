@@ -70,10 +70,18 @@ bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
   res <- data.frame(r = r, t(res))
   
   if (plot) {
-    matplot(r, res[, -1L], type = 'l', las = 1L, ylab = 'Error probability')
-    legend('right', col = 1:2, lty = 1:2, legend = paste('Type', c('I', 'II')))
+    matplot(
+      r, res[, -1L], type = 'l', las = 1L,
+      xlab = sprintf('critical value, r of %s', n),
+      ylab = 'Error probability'
+    )
+    legend(
+      'right', col = 1:2, lty = 1:2, bty = 'n',
+      legend = paste('Type', c('I', 'II'))
+    )
   }
   
+  res$` ` <- ifelse(res$type1 < 0.1 & res$type2 < 0.2, '*', '')
   res
 }
 
@@ -159,18 +167,19 @@ twostg_power <- function(p0, pa, n1, n2, r1, r2) {
 
 #' @rdname twostg_power
 #' @export
-twostg_sim <- function(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n2),
+twostg_sim <- function(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n1 + n2),
                        plot = TRUE) {
   exp <- expand.grid(r1 = r1, r2 = r2)
-  exp <- exp[exp[, 2L] > exp[, 1L] & n1 > exp[, 1L] & n2 > exp[, 2L], ]
+  exp <- exp[exp[, 2L] > exp[, 1L] & n1 > exp[, 1L] & (n1 + n2) > exp[, 2L], ]
   res <- Map(twostg_power, p0, pa, n1, n2, exp[, 1L], exp[, 2L])
   res <- data.frame(do.call('rbind', res), r1 = exp[, 1L], r2 = exp[, 2L])
+  grp <- (res$type1 < 0.1 & res$type2 < 0.2) + 1L
+  res$` ` <- ifelse(grp == 2L, '*', '')
   
   if (plot) {
-    grp <- (res$type1 < 0.1 & res$type2 < 0.2) + 1L
     plot(type2 ~ type1, res, las = 1L, col = grp, pch = c(1L, 16L)[grp])
     legend(
-      'topright', col = 2L, pch = 16L,
+      'topright', col = 2L, pch = 16L, bty = 'n',
       legend = expression(alpha < 0.1 ~ power > 0.8)
     )
   }

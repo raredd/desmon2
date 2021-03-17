@@ -7,7 +7,15 @@
 \usage{
 twostg_power(p0, pa, n1, n2, r1, r2)
 
-twostg_sim(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n2), plot = TRUE)
+twostg_sim(
+  p0,
+  pa,
+  n1,
+  n2,
+  r1 = seq.int(n1),
+  r2 = seq.int(n1 + n2),
+  plot = TRUE
+)
 }
 \arguments{
 \item{p0, pa}{probability of success under the null and alternative
