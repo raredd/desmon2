@@ -5,19 +5,23 @@
 
 #' Power for one-sample exact binomial designs
 #' 
+#' @description
 #' Determines the power and significance level for a one-sided, one-sample
 #' exact binomial test.
+#' 
+#' \code{bin1samp_power} accepts a single value or vector for \code{n} and/or
+#' \code{r} and will return a matrix with results for each combination. If
+#' only one value is given for each, a vector is returned.
 #' 
 #' @param p0,pa probability of success under the null and alternative
 #' hypotheses, respectively
 #' @param n sample size
-#' @param r for \code{bin1samp_power}, a single critical value; for
-#' \code{bin1samp_sim}, a vector of critical values
+#' @param r a vector of critical values
 #' @param plot logical; if \code{TRUE}, a the sequence of \code{r} versus
 #' type-I and type-II errors is plotted
 #' 
 #' @return
-#' \code{bin1samp_power} returns a vector with the following elements:
+#' \code{bin1samp_power} returns a vector or matrix with the following:
 #' 
 #' \item{\code{type1}}{the overall type-I error}
 #' \item{\code{type2}}{the overall type-II error}
@@ -40,6 +44,9 @@
 #' ## compare
 #' des[c('size', 'type2')]
 #' 
+#' bin1samp_power(p0, pa, des['n'], des['r'] + -2:2)
+#' bin1samp_power(p0, pa, des['n'] + 0:1, des['r'] + -2:2)
+#' 
 #' 
 #' ## simulate over critical values
 #' bin1samp_sim(p0, pa, des['n'])
@@ -49,16 +56,22 @@
 bin1samp_power <- function(p0, pa, n, r) {
   stopifnot(
     length(p0) == 1L,
-    length(pa) == 1L,
-    length(n) == 1L,
-    length(r) == 1L
+    length(pa) == 1L
   )
+  
+  exp <- expand.grid(r = r, n = n)
   
   bin1pow_ <- function(n, p, r) {
     sum(dbinom(seq(r, n), n, p))
   }
   
-  c(type1 = bin1pow_(n, p0, r), type2 = 1 - bin1pow_(n, pa, r))
+  res <- t(sapply(seq.int(nrow(exp)), function(ii)
+    c(type1 = bin1pow_(exp$n[ii], p0, exp$r[ii]),
+      type2 = 1 - bin1pow_(exp$n[ii], pa, exp$r[ii]))))
+  rownames(res) <- sprintf('n=%s, r=%s', exp$n, exp$r)
+  
+  if (nrow(exp) == 1L)
+    drop(res) else res
 }
 
 #' @rdname bin1samp_power

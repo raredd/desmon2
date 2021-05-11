@@ -15,14 +15,13 @@ hypotheses, respectively}
 
 \item{n}{sample size}
 
-\item{r}{for \code{bin1samp_power}, a single critical value; for
-\code{bin1samp_sim}, a vector of critical values}
+\item{r}{a vector of critical values}
 
 \item{plot}{logical; if \code{TRUE}, a the sequence of \code{r} versus
 type-I and type-II errors is plotted}
 }
 \value{
-\code{bin1samp_power} returns a vector with the following elements:
+\code{bin1samp_power} returns a vector or matrix with the following:
 
 \item{\code{type1}}{the overall type-I error}
 \item{\code{type2}}{the overall type-II error}
@@ -36,6 +35,10 @@ type-I and type-II errors is plotted}
 \description{
 Determines the power and significance level for a one-sided, one-sample
 exact binomial test.
+
+\code{bin1samp_power} accepts a single value or vector for \code{n} and/or
+\code{r} and will return a matrix with results for each combination. If
+only one value is given for each, a vector is returned.
 }
 \examples{
 p0 <- 0.1
@@ -45,6 +48,9 @@ bin1samp_power(p0, pa, des['n'], des['r'] + 1L)
 
 ## compare
 des[c('size', 'type2')]
+
+bin1samp_power(p0, pa, des['n'], des['r'] + -2:2)
+bin1samp_power(p0, pa, des['n'] + 0:1, des['r'] + -2:2)
 
 
 ## simulate over critical values
