@@ -14,11 +14,11 @@
 #' only one value is given for each, a vector is returned.
 #' 
 #' @param p0,pa probability of success under the null and alternative
-#' hypotheses, respectively
+#'   hypotheses, respectively
 #' @param n sample size
 #' @param r a vector of critical values
 #' @param plot logical; if \code{TRUE}, a the sequence of \code{r} versus
-#' type-I and type-II errors is plotted
+#'   type-I and type-II errors is plotted
 #' 
 #' @return
 #' \code{bin1samp_power} returns a vector or matrix with the following:
@@ -77,9 +77,7 @@ bin1samp_power <- function(p0, pa, n, r) {
 #' @rdname bin1samp_power
 #' @export
 bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
-  res <- sapply(r, function(x) {
-    bin1samp_power(p0, pa, n, x)
-  })
+  res <- sapply(r, function(x) bin1samp_power(p0, pa, n, x))
   res <- data.frame(r = r, t(res))
   
   if (plot) {
@@ -94,7 +92,9 @@ bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
     )
   }
   
+  ## alpha < 0.1 and power > 0.8
   res$` ` <- ifelse(res$type1 < 0.1 & res$type2 < 0.2, '*', '')
+  
   res
 }
 
@@ -103,20 +103,20 @@ bin1samp_sim <- function(p0, pa, n, r = seq.int(n), plot = TRUE) {
 #' Determines the operating characteristics of single-arm, two-stage designs.
 #' 
 #' @param p0,pa probability of success under the null and alternative
-#' hypotheses, respectively
+#'   hypotheses, respectively
 #' @param n1,n2 sample size of first and second stage
 #' @param r1,r2 maximum number of responses in first stage and overall where
-#' treatment is declared ineffective
+#'   treatment is declared ineffective
 #' @param plot logical; if \code{TRUE}, the type-I and type-II errors are
-#' plotted for each combination of (valid) \code{r1} and \code{r2} values
+#'   plotted for each combination of (valid) \code{r1} and \code{r2} values
 #' 
 #' @return
 #' \code{twostg_power} returns vector with the following elements:
 #' 
 #' \item{\code{Pr.stop1.H0}}{probability of stopping after the first stage
-#' if \code{p0} is true}
+#'   if \code{p0} is true}
 #' \item{\code{Pr.stop1.H1}}{probability of stopping after the first stage
-#' if \code{pa} is true}
+#'   if \code{pa} is true}
 #' \item{\code{type1}}{the overall type-I error}
 #' \item{\code{type2}}{the overall type-II error}
 #' \item{\code{E.tot.n.H0}}{expected total sample size if \code{p0} is true}
@@ -180,8 +180,8 @@ twostg_power <- function(p0, pa, n1, n2, r1, r2) {
 
 #' @rdname twostg_power
 #' @export
-twostg_sim <- function(p0, pa, n1, n2, r1 = seq.int(n1), r2 = seq.int(n1 + n2),
-                       plot = TRUE) {
+twostg_sim <- function(p0, pa, n1, n2, r1 = seq.int(n1),
+                       r2 = seq.int(n1 + n2), plot = TRUE) {
   exp <- expand.grid(r1 = r1, r2 = r2)
   exp <- exp[exp[, 2L] > exp[, 1L] & n1 > exp[, 1L] & (n1 + n2) > exp[, 2L], ]
   res <- Map(twostg_power, p0, pa, n1, n2, exp[, 1L], exp[, 2L])

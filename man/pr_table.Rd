@@ -14,10 +14,10 @@ that the probabilities will always be calculated as weakly less or greater
 than \code{crit}, i.e., \code{Pr(>= crit)} or \code{Pr(<= crit)} depending
 if \code{greater} is \code{TRUE} or \code{FALSE}}
 
-\item{greater}{\code{logical}; the direction of \code{crit}: if
-\code{FALSE}, the probabilities are calculated for \code{crit}
-\emph{or fewer} events; if \code{TRUE}, the probabilities are calculated
-for \code{crit} \emph{or more} events}
+\item{greater}{\code{logical}; direction of \code{crit}: if \code{FALSE},
+the probabilities are calculated for \code{crit} \emph{or fewer} events;
+if \code{TRUE}, the probabilities are calculated for \code{crit}
+\emph{or more} events}
 
 \item{digits}{number of digits past the decimal point to keep}
 }

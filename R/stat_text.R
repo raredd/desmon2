@@ -10,7 +10,7 @@
 #' 
 #' @param x an object of class \code{"stat_text"}
 #' @param width a positive integer giving the target column for wrapping
-#' lines in the output; see \code{\link{strwrap}}
+#'   lines in the output; see \code{\link{strwrap}}
 #' @param ... ignored
 #' 
 #' @export
@@ -37,8 +37,8 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' @param ... additional arguments passed to \code{\link[desmon]{bin1samp}}
 #' @param conf confidence level for confidence intervals
 #' @param outcome text string describing the outcome; if a string such as
-#' \code{"long description (abbr)"} is given, then entire string is used in
-#' the first instance, and only the text in parens is used subsequently
+#'   \code{"long description (abbr)"} is given, then entire string is used
+#'   in the first instance, and only the text in parens is used subsequently
 #' 
 #' @family designs
 #' 
@@ -230,10 +230,10 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
 #' @param ... additional arguments passed to \code{\link[desmon]{simon}}
 #' @param conf confidence level for single- and two-stage confidence intervals
 #' @param which optional; an integer selecting the design to use if multiple
-#' are found
+#'   are found
 #' @param outcome text string describing the outcome; if a string such as
-#' \code{"long desc (abbr)"} is given, then entire string is used in the first
-#' instance, and only the text in parens is used subsequently
+#'   \code{"long desc (abbr)"} is given, then entire string is used in the
+#'   first instance, and only the text in parens is used subsequently
 #' 
 #' @family designs
 #' 
@@ -360,11 +360,11 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
 #' @param p0,pa the null and alternative hypotheses
 #' @param n1,n2 sample size of first and second stage
 #' @param r1,r2 maximum number of responses in first stage and overall where
-#' treatment is declared ineffective
+#'   treatment is declared ineffective
 #' @param conf confidence level for single- and two-stage confidence intervals
 #' @param outcome text string describing the outcome; if a string such as
-#' \code{"long description (abbr)"} is given, then entire string is used in
-#' the first instance, and only the text in parens is used subsequently
+#'   \code{"long description (abbr)"} is given, then entire string is used in
+#'   the first instance, and only the text in parens is used subsequently
 #' 
 #' @family designs
 #' 
@@ -502,9 +502,9 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
 #' @param r proportion assigned to group 1
 #' @param arms labels for the two groups
 #' @param type the type of test used to calculate power, see
-#' \code{\link[desmon]{b2p}}
+#'   \code{\link[desmon]{b2p}}
 #' @param cont.cor logical; if \code{TRUE} (default), the sample size will be
-#' calculated for the continuity corrected statistic
+#'   calculated for the continuity corrected statistic
 #' 
 #' @family designs
 #' 

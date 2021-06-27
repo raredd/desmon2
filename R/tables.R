@@ -10,10 +10,10 @@
 #' 
 #' @param r,n number of DLTs observed and total size
 #' @param prior a vector of length two giving the distribution assumptions
-#' for a beta prior (default is \code{beta(0.5, 0.5)})
+#'   for a beta prior (default is \code{beta(0.5, 0.5)})
 #' @param alpha type-I error probability
 #' @param cval for specifed proportions of DLTs, the probability that the rate
-#' will be greater than \code{cval} is computed
+#'   will be greater than \code{cval} is computed
 #' @param digits number of digits to print
 #' 
 #' @return
@@ -95,13 +95,13 @@ dlt_table <- function(prob, digits = getOption('digits')) {
 #' 
 #' @param prob a vector of probabilities for event
 #' @param n,crit sample size and critical number of events, respectively; note
-#' that the probabilities will always be calculated as weakly less or greater
-#' than \code{crit}, i.e., \code{Pr(>= crit)} or \code{Pr(<= crit)} depending
-#' if \code{greater} is \code{TRUE} or \code{FALSE}
-#' @param greater \code{logical}; the direction of \code{crit}: if
-#' \code{FALSE}, the probabilities are calculated for \code{crit}
-#' \emph{or fewer} events; if \code{TRUE}, the probabilities are calculated
-#' for \code{crit} \emph{or more} events
+#'   that the probabilities will always be calculated as weakly less or greater
+#'   than \code{crit}, i.e., \code{Pr(>= crit)} or \code{Pr(<= crit)} depending
+#'   if \code{greater} is \code{TRUE} or \code{FALSE}
+#' @param greater \code{logical}; direction of \code{crit}: if \code{FALSE},
+#'   the probabilities are calculated for \code{crit} \emph{or fewer} events;
+#'   if \code{TRUE}, the probabilities are calculated for \code{crit}
+#'   \emph{or more} events
 #' @param digits number of digits past the decimal point to keep
 #' 
 #' @seealso

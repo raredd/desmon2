@@ -17,8 +17,8 @@ simon_text(p0, pa, ..., conf = 0.95, which = 1L, outcome = "OUTCOME (OUT)")
 are found}
 
 \item{outcome}{text string describing the outcome; if a string such as
-\code{"long desc (abbr)"} is given, then entire string is used in the first
-instance, and only the text in parens is used subsequently}
+\code{"long desc (abbr)"} is given, then entire string is used in the
+first instance, and only the text in parens is used subsequently}
 }
 \value{
 A character string describing the Simon design with

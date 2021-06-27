@@ -13,9 +13,9 @@
 #' @param probs vector of true rates of DLTs
 #' @param expansion (optional) integer giving size of expansion cohort
 #' @param escalation logical; if \code{TRUE}, dose-escalation rules are used;
-#' otherwise, de-escalation rules are used with decreasing \code{probs}
+#'   otherwise, de-escalation rules are used with decreasing \code{probs}
 #' @param n.max maximum number of patients available for dose-finding and
-#' expansion cohorts combined
+#'   expansion cohorts combined
 #' 
 #' @return
 #' A list with the following components:
@@ -205,7 +205,7 @@ sim3p3_ <- function(probs, d, mat, idx = 1L) {
 #' @param expansion (optional) integer giving size of expansion cohort
 #' @param target target AE rate
 #' @param nptmax max number of patients used on study (not including the
-#' expansion cohort)
+#'   expansion cohort)
 #' @param ... additional arguments passed to \code{\link[UBCRM]{simCrm}}
 #' 
 #' @return
