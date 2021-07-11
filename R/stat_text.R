@@ -1,5 +1,5 @@
 ### stat text
-# bin1samp_text, mtd_text, simon_text, twostg_text
+# bin1samp_text, mtd_text, simon_text, twostg_text, b2p_text
 # 
 # S3 methods
 # print.stat_text
@@ -51,15 +51,17 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' 
 #' @examples
 #' ## basic usage
-#' bin1samp_text(0.3, 0.5)
+#' p0 <- 0.3
+#' pa <- 0.5
+#' bin1samp_text(p0, pa)
 #' 
 #' \dontrun{
 #' ## use cat and/or strwrap for improved formatting and writing
-#' cat(strwrap(bin1samp_text(.3, .5), width = 80), sep = '\n')
+#' cat(strwrap(bin1samp_text(p0, pa), width = 80), sep = '\n')
 #' 
-#' cat(bin1samp_text(.3, .5), file = '~/bin1samp_design.txt')
+#' cat(bin1samp_text(p0, pa), file = '~/bin1samp_design.txt')
 #' 
-#' cat(bin1samp_text(.3, .5, outcome = 'overall response (OR) rate'),
+#' cat(bin1samp_text(p0, pa, outcome = 'overall response (OR) rate'),
 #'     file = '~/bin1samp_design2.txt')
 #' }
 #' 
