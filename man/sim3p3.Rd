@@ -21,8 +21,10 @@ expansion cohorts combined}
 A list with the following components:
 
 \item{\code{$data}}{dose by patient matrix: 0 - no DLT, 1 - DLT}
-\item{\code{$mtd}}{numeric dose level selected}
-\item{\code{$level}}{integer mtd level (ie, row of \code{data} selected)}
+\item{\code{$summary}}{total number of DTLs, patients, and probability of
+  DLT per dose level for \strong{esc}alation and \strong{tot}al}
+\item{\code{$level}}{mtd level (i.e., row of \code{data} selected)}
+\item{\code{$mtd}}{DLT rate of dose level selected}
 \item{\code{$expansion}}{observed rate of DLT in expansion cohort}
 \item{\code{$cohort}}{observed rate of DLT in all patients}
 \item{\code{$enrolled}}{total number of patients enrolled on study}

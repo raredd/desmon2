@@ -21,8 +21,10 @@
 #' A list with the following components:
 #' 
 #' \item{\code{$data}}{dose by patient matrix: 0 - no DLT, 1 - DLT}
-#' \item{\code{$mtd}}{numeric dose level selected}
-#' \item{\code{$level}}{integer mtd level (ie, row of \code{data} selected)}
+#' \item{\code{$summary}}{total number of DTLs, patients, and probability of
+#'   DLT per dose level for \strong{esc}alation and \strong{tot}al}
+#' \item{\code{$level}}{mtd level (i.e., row of \code{data} selected)}
+#' \item{\code{$mtd}}{DLT rate of dose level selected}
 #' \item{\code{$expansion}}{observed rate of DLT in expansion cohort}
 #' \item{\code{$cohort}}{observed rate of DLT in all patients}
 #' \item{\code{$enrolled}}{total number of patients enrolled on study}
@@ -104,7 +106,7 @@ sim3p3 <- function(probs, expansion = 10, escalation = TRUE, n.max = Inf) {
   )
   mat <- matrix(NA, length(probs), sum(c(npl, expansion)), dimnames = dnn)
   
-  res <- sim3p3_(probs, !escalation, mat)
+  res <- sim3p3_(probs, !escalation, mat, 1L)
   mat <- res$mat
   idx <- res$idx
   
@@ -140,9 +142,31 @@ sim3p3 <- function(probs, expansion = 10, escalation = TRUE, n.max = Inf) {
       pr_exp <- mean(expansion)
   }
   
+  sum <- data.frame(
+    level = seq_along(probs),
+    dlt_esc = rowSums(mat[, 1:6], na.rm = TRUE),
+    npt_esc = rowSums(!is.na(mat[, 1:6])),
+    prob_esc = NA,
+    dlt_tot = rowSums(mat, na.rm = TRUE),
+    npt_tot = rowSums(!is.na(mat)),
+    prob_tot = NA
+  )
+  sum <- within(sum, {
+    prob_esc <- replace(dlt_esc / npt_esc, -idx, NA)
+    prob_tot <- replace(dlt_tot / npt_tot, -idx, NA)
+  })
+  
+  l <- function(x, label) {
+    structure(x, label = label)
+  }
+  
   list(
-    data = mat, mtd = probs[idx], level = idx, expansion = pr_exp,
-    cohort = pr_all, enrolled = length(sort(mat))
+    data = mat, summary = sum,
+    level = l(idx, 'Level selected as MTD'),
+    mtd = l(probs[idx], 'Probability of DLT in level selected'),
+    expansion = l(pr_exp, 'DLT rate in expansion cohort'),
+    cohort = l(pr_all, 'DLT rate in MTD cohort'),
+    enrolled = l(length(sort(mat)), 'Total enrolled on study')
   )
 }
 
@@ -212,8 +236,8 @@ sim3p3_ <- function(probs, d, mat, idx = 1L) {
 #' A list with following components:
 #' 
 #' \item{\code{$data}}{\code{UBCRM::simCrm()$data}}
-#' \item{\code{$mtd}}{numeric dose level selected}
-#' \item{\code{$level}}{integer mtd level (ie, row of \code{data} selected)}
+#' \item{\code{$level}}{mtd level (i.e., row of \code{data} selected)}
+#' \item{\code{$mtd}}{DLT rate of dose level selected}
 #' \item{\code{$expansion}}{observed rate of DLT in expansion cohort}
 #' \item{\code{$cohort}}{observed rate of DLT in all patients}
 #' \item{\code{$enrolled}}{total number of patients enrolled on study}
@@ -248,7 +272,7 @@ sim3p3_ <- function(probs, d, mat, idx = 1L) {
 #' 
 #' @export
 
-simcrm <- function(probs, expansion = 0L, target = 1/6,
+simcrm <- function(probs, expansion = 0L, target = 1 / 6,
                    nptmax = length(probs) * 6L, ...) {
   lvl <- paste('dose', seq_along(probs))
   crm <- UBCRM::simCrm(

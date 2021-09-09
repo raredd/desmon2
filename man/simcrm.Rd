@@ -22,8 +22,8 @@ expansion cohort)}
 A list with following components:
 
 \item{\code{$data}}{\code{UBCRM::simCrm()$data}}
-\item{\code{$mtd}}{numeric dose level selected}
-\item{\code{$level}}{integer mtd level (ie, row of \code{data} selected)}
+\item{\code{$level}}{mtd level (i.e., row of \code{data} selected)}
+\item{\code{$mtd}}{DLT rate of dose level selected}
 \item{\code{$expansion}}{observed rate of DLT in expansion cohort}
 \item{\code{$cohort}}{observed rate of DLT in all patients}
 \item{\code{$enrolled}}{total number of patients enrolled on study}
