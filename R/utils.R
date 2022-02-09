@@ -1,8 +1,13 @@
 ### utils
 # unexported:
-# trim, trim2
+# %||%, trim, trim2
 ###
 
+
+`%||%` <- function(a, b) {
+  if (!is.null(a))
+    a else b
+}
 
 trim <- function(x, dig = FALSE) {
   if (dig) {
