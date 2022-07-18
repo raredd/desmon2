@@ -15,7 +15,8 @@ hypotheses, respectively}
 
 \item{n}{sample size}
 
-\item{r}{a vector of critical values}
+\item{r}{a vector of critical values, typically the minimum number of
+successes required to reject \code{pa}}
 
 \item{plot}{logical; if \code{TRUE}, a the sequence of \code{r} versus
 type-I and type-II errors is plotted}

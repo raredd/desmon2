@@ -334,7 +334,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     
     'If the true', outcome2, 'is', sprintf('%s%%,', p0 * 100),
     'the regimen will be considered non-promising with probability',
-    sprintf('%.3f;', p0stg[1L]), 'and stop early with a probability of',
+    sprintf('%.3f', p0stg[1L]), 'and stop early with a probability of',
     sprintf('%.3f.', p0stg[2L]),
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',

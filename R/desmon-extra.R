@@ -16,7 +16,8 @@
 #' @param p0,pa probability of success under the null and alternative
 #'   hypotheses, respectively
 #' @param n sample size
-#' @param r a vector of critical values
+#' @param r a vector of critical values, typically the minimum number of
+#'   successes required to reject \code{pa}
 #' @param plot logical; if \code{TRUE}, a the sequence of \code{r} versus
 #'   type-I and type-II errors is plotted
 #' 
