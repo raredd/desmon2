@@ -4,7 +4,7 @@
 \alias{bin1samp_text}
 \title{One-sample design text}
 \usage{
-bin1samp_text(p0, pa, ..., conf = 0.95, outcome = "OUTCOME (OUT)")
+bin1samp_text(p0, pa, ..., conf = 0.95, outcome = "_OUTCOME_ (_OUT_)")
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}

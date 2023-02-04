@@ -4,7 +4,7 @@
 \alias{simon_text}
 \title{Simon design text}
 \usage{
-simon_text(p0, pa, ..., conf = 0.95, which = 1L, outcome = "OUTCOME (OUT)")
+simon_text(p0, pa, ..., conf = 0.95, which = 1L, outcome = "_OUTCOME_ (_OUT_)")
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}

@@ -68,7 +68,7 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' @export
 
 bin1samp_text <- function(p0, pa, ..., conf = 0.95,
-                          outcome = 'OUTCOME (OUT)') {
+                          outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
   
@@ -203,7 +203,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     'patients over', ndose, 'dose levels. With at least 3 +', expansion,
     'treated at the MTD, the 95% exact binomial confidence interval for the',
     'observed rate of DLTs will be no wider than',
-    sprintf(' %s%%.', round(max(ciw) * 100))
+    sprintf('%s%%.', round(max(ciw) * 100))
   )
   
   if (!is.null(prob)) {
@@ -269,7 +269,7 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
 #' @export
 
 simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
-                       outcome = 'OUTCOME (OUT)') {
+                       outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
   
@@ -403,7 +403,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
 #' @export
 
 twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
-                       outcome = 'OUTCOME (OUT)') {
+                       outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
   
@@ -471,7 +471,7 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     
     'If the true', outcome2, 'is', sprintf('%s%%,', p0 * 100),
     'the regimen will be considered non-promising with probability',
-    sprintf('%.3f;', p0stg[1L]), 'and stop early with a probability of',
+    sprintf('%.3f', p0stg[1L]), 'and stop early with a probability of',
     sprintf('%.3f.', p0stg[2L]),
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',

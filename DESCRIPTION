@@ -14,5 +14,5 @@ Suggests:
 License: file LICENSE
 URL: https://github.com/raredd/desmon2
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
