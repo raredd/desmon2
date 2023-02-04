@@ -4,10 +4,22 @@
 \alias{simon_text}
 \title{Simon design text}
 \usage{
-simon_text(p0, pa, ..., conf = 0.95, which = 1L, outcome = "_OUTCOME_ (_OUT_)")
+simon_text(
+  p0,
+  pa,
+  alpha = 0.1,
+  beta = 0.1,
+  ...,
+  conf = NULL,
+  which = 1L,
+  outcome = "_OUTCOME_ (_OUT_)"
+)
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}
+
+\item{alpha, beta}{the target type-I and type-II errors, passed to
+\code{\link[desmon]{simon}}}
 
 \item{...}{additional arguments passed to \code{\link[desmon]{simon}}}
 

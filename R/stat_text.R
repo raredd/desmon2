@@ -34,7 +34,8 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' Output one-sided, one-sample, single-stage exact binomial design text.
 #' 
 #' @param p0,pa the null and alternative hypotheses
-#' @param ... additional arguments passed to \code{\link[desmon]{bin1samp}}
+#' @param alpha,beta,n.min the target type-I and type-II errors and minimum
+#'   sample size considered, passed to \code{\link[desmon]{bin1samp}}
 #' @param conf confidence level for confidence intervals
 #' @param outcome text string describing the outcome; if a string such as
 #'   \code{"long description (abbr)"} is given, then entire string is used
@@ -67,14 +68,17 @@ print.stat_text <- function(x, width = NULL, ...) {
 #' 
 #' @export
 
-bin1samp_text <- function(p0, pa, ..., conf = 0.95,
+bin1samp_text <- function(p0, pa, alpha = 0.1, beta = 0.1,
+                          n.min = 20L, conf = NULL,
                           outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
   
-  call <- bin1samp(p0, pa, ...)
-  psep <- '\n\n'
+  call <- bin1samp(p0, pa, alpha, beta, n.min)
+  if (is.null(conf))
+    conf <- 1 - (call[[5L]] / 2)
   
+  psep <- '\n\n'
   args <- as.list(call)
   
   onewid <- sapply(seq.int(args$n), function(x) {
@@ -90,6 +94,11 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
     
     psep,
     
+    'This study was designed to target an overall power and one-sided type-I error of',
+    sprintf('%.1f%% and %.2f, respectively.', (1 - beta)  * 100, alpha),
+    
+    psep,
+    
     args$n, 'eligible patients will be enrolled. If', args$r, 'or fewer',
     outcome2, 'are observed, the regimen will be considered non-promising,',
     'and the study will be unsuccessful. If at least', args$r + 1L,
@@ -99,17 +108,19 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
     
     psep,
     
-    'The study has an overall power and type-I error of',
+    'The exact overall power and one-sided type-I error of this design are',
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', args$n,
-    'patients, the single-stage exact 95% confidence interval for', outcome2,
+    sprintf('patients, the single-stage exact %.1f%% confidence interval for',
+            conf * 100),
+    outcome2,
     'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
     
     'If the true', outcome2, 'is', sprintf('%s%%,', p0 * 100),
     'the regimen will be considered non-promising with probability',
-    sprintf('%.3f;', 1 - args$size), 'and promising with probability',
+    sprintf('%.3f', 1 - args$size), 'and promising with probability',
     sprintf('%.3f', args$size), '(type-I error).',
     
     psep,
@@ -134,6 +145,7 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
 #' @param ndose number of dose levels
 #' @param expansion size of the expansion cohort
 #' @param digits number of digits past the decimal point to keep
+#' @param conf confidence level for confidence intervals
 #' 
 #' @family designs
 #' 
@@ -156,12 +168,12 @@ bin1samp_text <- function(p0, pa, ..., conf = 0.95,
 #' @export
 
 mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
-                     digits = 2L) {
+                     digits = 2L, conf = 0.95) {
   ndose <- ndose[1L]
   
   bin <- Vectorize(binci)
   cin <- 3 + expansion
-  ciw <- apply(bin(seq.int(cin), cin), 2L, diff)
+  ciw <- apply(bin(seq.int(cin), cin, conf = conf), 2L, diff)
   
   psep <- '\n\n'
   
@@ -201,8 +213,8 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
     
     'The dose-finding phase of the study will enroll up to', ndose * 6,
     'patients over', ndose, 'dose levels. With at least 3 +', expansion,
-    'treated at the MTD, the 95% exact binomial confidence interval for the',
-    'observed rate of DLTs will be no wider than',
+    sprintf('treated at the MTD, the %.0f%% exact binomial', conf * 100),
+    'confidence interval for the observed rate of DLTs will be no wider than',
     sprintf('%s%%.', round(max(ciw) * 100))
   )
   
@@ -229,6 +241,8 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
 #' Output Simon two-stage design text.
 #' 
 #' @param p0,pa the null and alternative hypotheses
+#' @param alpha,beta the target type-I and type-II errors, passed to
+#'   \code{\link[desmon]{simon}}
 #' @param ... additional arguments passed to \code{\link[desmon]{simon}}
 #' @param conf confidence level for single- and two-stage confidence intervals
 #' @param which optional; an integer selecting the design to use if multiple
@@ -268,18 +282,22 @@ mtd_text <- function(prob = 1:5 / 10, ndose = 3L, expansion = 10L,
 #' 
 #' @export
 
-simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
+simon_text <- function(p0, pa, alpha = 0.1, beta = 0.1,
+                       ..., conf = NULL, which = 1L,
                        outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
   
-  call <- simon(p0, pa, ...)
+  call <- simon(p0, pa, alpha = alpha, beta = beta, ...)
   psep <- '\n\n'
   
   args <- call$designs
   if (which > nrow(args))
     which <- 1L
   args <- as.list(args[which, ])
+  
+  if (is.null(conf))
+    conf <- 1 - (args$size / 2)
   
   total <- args$n1 + args$n2
   
@@ -305,6 +323,11 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     
     psep,
     
+    'This study was designed to target an overall power and one-sided type-I error of',
+    sprintf('%.1f%% and %.2f, respectively.', (1 - beta)  * 100, alpha),
+    
+    psep,
+    
     args$n1, 'eligible patients will be enrolled to stage one. If', args$r1,
     'or fewer', outcome2,
     'are observed, the regimen will be considered non-promising, and',
@@ -320,14 +343,15 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     'If at least', args$r2 + 1L, outcome2, 'are observed in', total,
     'patients, the study will be considered successful and the regimen',
     'worthy of further study. If the total number of responses observed is',
-    args$r2, 'or fewer, the regimen will be considered non-promising.',
+    args$r2, 'or fewer, then the regimen will be considered non-promising.',
     
     psep,
     
-    'The study has an overall power and type-I error of',
+    'The study has an exact overall power and type-I error of',
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
-    'patients, the two-stage exact 95% confidence interval for', outcome2,
+    sprintf('patients, the two-stage exact %.1f%% confidence interval for', conf * 100),
+    outcome2,
     'will be no wider than', sprintf(' %s%%.', round(max(twowid) * 100)),
     
     psep,
@@ -338,7 +362,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
     sprintf('%.3f.', p0stg[2L]),
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
-    sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
+    sprintf('%.1f%%', conf * 100), 'confidence interval for', outcome2,
     'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
@@ -402,7 +426,7 @@ simon_text <- function(p0, pa, ..., conf = 0.95, which = 1L,
 #' 
 #' @export
 
-twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
+twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = NULL,
                        outcome = '_OUTCOME_ (_OUT_)') {
   if (!nzchar(outcome2 <- gsub('\\((.*?)\\)|.', '\\1', outcome)))
     outcome2 <- outcome
@@ -420,6 +444,8 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     size = args[['type1']], type2 = args[['type2']],
     E.tot.n.H0 = args[['E.tot.n.H0']]
   )
+  if (is.null(conf))
+    conf <- 1 - (args$size / 2)
   
   total <- args$n1 + args$n2
   
@@ -444,7 +470,7 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     
     args$n1, 'eligible patients will be enrolled to stage one. If', args$r1,
     'or fewer', outcome2,
-    'are observed, the regimen will be considered non-promising, and',
+    'are observed, then the regimen will be considered non-promising, and',
     'the study will stop early for lack of efficacy.',
     
     psep,
@@ -464,7 +490,8 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     'The study has an overall power and type-I error of',
     sprintf('%.3f', 1 - args$type2), 'and', sprintf('%.3f', args$size),
     ', respectively. With a total size of', total,
-    'patients, the two-stage exact 95% confidence interval for', outcome2,
+    sprintf('patients, the two-stage exact %.1f%% confidence interval for', conf * 100),
+    outcome2,
     'will be no wider than', sprintf(' %s%%.', round(max(twowid) * 100)),
     
     psep,
@@ -475,7 +502,7 @@ twostg_text <- function(p0, pa, n1, n2, r1, r2, conf = 0.95,
     sprintf('%.3f.', p0stg[2L]),
     
     'With the stage-one sample size of', args$n1, 'patients, the exact',
-    sprintf('%s%%', conf * 100), 'confidence interval for', outcome2,
+    sprintf('%.1f%%', conf * 100), 'confidence interval for', outcome2,
     'will be no wider than', sprintf(' %s%%.', round(max(onewid) * 100)),
     
     psep,
@@ -558,37 +585,46 @@ b2p_text <- function(p1, p2, n1 = NULL, n2 = n1,
   r2 <- r2 / min(r2)
   or <- p1 * (1 - p2) / (p2 * (1 - p1))
   
-  args <- list(p1 = p1, p2 = p2, n1 = n1, n2 = n2, power = power, or = or,
-               alpha = alpha, r = r, r2 = r2, type = type, test = test)
+  conf <- 1 - alpha * 2
+  args <- list(
+    p1 = p1, p2 = p2, n1 = n1, n2 = n2, power = power, or = or,
+    alpha = alpha, r = r, r2 = r2, type = type, test = test
+  )
   
-  if (is.null(power)) {
+  if (is.null(power))
     args$power <- desmon::b2p(p1, p2, n1, n2, alpha, TRUE)[[type]]
-  }
+  
   if (is.null(n1)) {
     des <- desmon::b2n(p1, p2, power, r, alpha)[[(!cont.cor) + 1L]]
     args$n1 <- ceiling(r * des)
     args$n2 <- ceiling((1 - r) * des)
   }
   
+  ci <- c(args$n1, args$n2)
+  ci <- sapply(c(sum(ci), unique(ci)), function(x)
+    diff(binci(x / 2, x, conf = conf)))
   
   txt <- paste(
     'Patients will be randomly assigned', paste(r2, collapse = ':'),
-    'to the', paste(arms, collapse = ' or '), 'arms.',
+    'to the', iprint(arms, ' or '), 'arms.',
     'The success rates for are assumed to be', p1, 'and', p2,
-    sprintf('(odds ratio of %.3f)', args$or), 'for the',
-    paste(arms, collapse = ' and '), 'arms, respectively.',
+    sprintf('(odds ratio of %.1f)', args$or), 'for the',
+    iprint(arms, ' and '), 'arms, respectively.',
     
     psep,
     
     'With', args$n1, 'and', args$n2, 'assigned to each arm, there will be',
-    'at least', sprintf('%.3f', args$power), 'power',
+    'at least', sprintf('%.1f', args$power * 100), 'power',
     sprintf('(%s)', args$test), 'with a one-sided',
     sprintf('%.3f', args$alpha), 'significance level.',
     
     psep,
     
     'The overall sample size will be', args$n1 + args$n2, 'with', args$n1,
-    'on the', arms[1L], 'arm and', args$n2, 'on the', arms[2L], 'arm.'
+    'on the', arms[1L], 'arm and', args$n2, 'on the', arms[2L], 'arm.',
+    sprintf('The %.1f%% exact binomial confidence intervals for', conf * 100),
+    'all patients and the', iprint(arms), 'arms will be no wider than',
+    sprintf('%s%%, respectively.', iprint(round(ci * 100)))
   )
   
   structure(

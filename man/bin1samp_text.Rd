@@ -4,12 +4,21 @@
 \alias{bin1samp_text}
 \title{One-sample design text}
 \usage{
-bin1samp_text(p0, pa, ..., conf = 0.95, outcome = "_OUTCOME_ (_OUT_)")
+bin1samp_text(
+  p0,
+  pa,
+  alpha = 0.1,
+  beta = 0.1,
+  n.min = 20L,
+  conf = NULL,
+  outcome = "_OUTCOME_ (_OUT_)"
+)
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}
 
-\item{...}{additional arguments passed to \code{\link[desmon]{bin1samp}}}
+\item{alpha, beta, n.min}{the target type-I and type-II errors and minimum
+sample size considered, passed to \code{\link[desmon]{bin1samp}}}
 
 \item{conf}{confidence level for confidence intervals}
 

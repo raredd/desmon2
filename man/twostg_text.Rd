@@ -4,7 +4,7 @@
 \alias{twostg_text}
 \title{Two-stage design text}
 \usage{
-twostg_text(p0, pa, n1, n2, r1, r2, conf = 0.95, outcome = "_OUTCOME_ (_OUT_)")
+twostg_text(p0, pa, n1, n2, r1, r2, conf = NULL, outcome = "_OUTCOME_ (_OUT_)")
 }
 \arguments{
 \item{p0, pa}{the null and alternative hypotheses}

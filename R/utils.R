@@ -1,12 +1,21 @@
 ### utils
 # unexported:
-# %||%, trim, trim2
+# %||%, iprint, trim, trim2
 ###
 
 
 `%||%` <- function(a, b) {
   if (!is.null(a))
     a else b
+}
+
+iprint <- function(x, copula = ' and ') {
+  # iprint(1:2); iprint(1:4); iprint(1)
+  if (length(x) == 2L)
+    paste(x, collapse = copula)
+  else if (length(x) > 2L)
+    sprintf('%s,%s %s', toString(head(x, -1L)), copula, tail(x, 1L))
+  else as.character(x)
 }
 
 trim <- function(x, dig = FALSE) {

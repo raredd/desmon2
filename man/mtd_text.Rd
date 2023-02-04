@@ -4,7 +4,7 @@
 \alias{mtd_text}
 \title{MTD design text}
 \usage{
-mtd_text(prob = 1:5/10, ndose = 3L, expansion = 10L, digits = 2L)
+mtd_text(prob = 1:5/10, ndose = 3L, expansion = 10L, digits = 2L, conf = 0.95)
 }
 \arguments{
 \item{prob}{a vector of toxicity event rates}
@@ -14,6 +14,8 @@ mtd_text(prob = 1:5/10, ndose = 3L, expansion = 10L, digits = 2L)
 \item{expansion}{size of the expansion cohort}
 
 \item{digits}{number of digits past the decimal point to keep}
+
+\item{conf}{confidence level for confidence intervals}
 }
 \value{
 A character string describing the design with \code{attr(, "table")}
