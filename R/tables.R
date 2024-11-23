@@ -1,5 +1,5 @@
-### probability tables
-# blt_table, dlt_table, pr_table, ransch, ranschtbl
+### probability tables, rand tables
+# blt_table, dlt_table, pr_table, ransch, ranschtbl, summary.ransch
 #
 # unexported:
 # ransch_
@@ -148,11 +148,15 @@ pr_table <- function(prob, n, crit, greater = FALSE, digits = getOption('digits'
 
 #' ransch
 #'
-#' Generate block randomization schedule tables.
+#' Generate block randomization schedule tables with fixed or random block
+#' sizes.
 #'
 #' @param n sample size of study or each stratum
 #' @param block block size; note if \code{block} is not a factor of \code{n},
 #'   \code{n} will be increased to accommodate a full block
+#'
+#'   for randomly-sized blocks, a vector of potential block sizes; note that
+#'   a block size must be a multiple of \code{sum(r)}
 #' @param arms names of the treatment arms
 #' @param r randomization ratio; see examples
 #' @param strata an optional named list of vectors for each stratum
@@ -165,12 +169,29 @@ pr_table <- function(prob, n, crit, greater = FALSE, digits = getOption('digits'
 #' ransch(24, 6, 1:3) ## 1:1:1
 #' ransch(24, 8, 1:3, c(1, 2, 1)) ## 1:2:1
 #'
+#'
+#' ## randomly-sized blocks
+#' ransch(24, c(2, 4, 6), 1:2)
+#'
+#' set.seed(1)
+#' r1 <- ransch(24, c(3, 6, 9), 1:3)
+#' set.seed(1)
+#' r2 <- ransch(24, 1:10, 1:3)
+#'
+#' ## note that these two are the same since only blocks sized 3, 6, 9
+#' ## work for 1:1:1 randomization
+#' identical(r1, r2)
+#' addmargins(table(r1[[1]][, -1]))
+#' summary(r1)
+#'
+#' 
 #' ## one two-level stratum
 #' ransch(24, 4, 1:2, strata = list(Age = c('<65', '>=65')))
 #'
 #' ## multiple strata
 #' strata <- list(Site = LETTERS[1:3], Age = c('<65', '>=65'))
-#' ransch(24, 4, 1:2, strata = strata)
+#' r3 <- ransch(24, 4, 1:2, strata = strata)
+#' summary(r3)
 #'
 #'
 #' ## tables for printing
@@ -178,12 +199,14 @@ pr_table <- function(prob, n, crit, greater = FALSE, digits = getOption('digits'
 #' ranschtbl(24, 4, c('Pbo', 'Trt'), c(1, 3), strata)
 #'
 #' \dontrun{
+#' ## use a path to write tables to file (one csv per stratum)
 #' ranschtbl(24, 4, c('Pbo', 'Trt'), strata = strata, write = '~/desktop')
 #' }
 #'
 #' @export
 
-ransch <- function(n, block, arms, r = 1L, strata = NULL) {
+ransch <- function(n, block, arms, r = rep_len(1L, length(arms)),
+                   strata = NULL) {
   if (!is.null(strata)) {
     if (is.null(names(strata)))
       names(strata) <- paste0('Stratum', seq_along(strata))
@@ -195,21 +218,26 @@ ransch <- function(n, block, arms, r = 1L, strata = NULL) {
   res <- replicate(pmax(1L, length(strata)), simplify = FALSE, {
     ransch_(n, block, arms, rep_len(r, length(arms)))
   })
+  class(res) <- c('ransch')
   
-  setNames(res, strata %||% 'ransch')
+  setNames(res, if (is.null(strata)) 'ransch' else strata)
 }
 
 #' @rdname ransch
 #' @export
-ranschtbl <- function(n, block, arms, r = 1L, strata = NULL, write = NULL) {
+ranschtbl <- function(n, block, arms, r = rep_len(1L, length(arms)),
+                      strata = NULL, write = NULL) {
   res <- ransch(n, block, arms, r, strata)
   
+  ## add columns to each table
   res[] <- lapply(seq_along(res), function(ii) {
     within(res[[ii]], {
       Stratum <- names(res)[ii]
       Name <- ID <- Date <- NA
     })
   })
+  
+  class(res) <- c('ransch')
   
   if (is.null(names(res)))
     names(res) <- 'ransch'
@@ -226,23 +254,66 @@ ranschtbl <- function(n, block, arms, r = 1L, strata = NULL, write = NULL) {
   } else res
 }
 
+#' @rdname ransch
+#' @export
+summary.ransch <- function(x, totals = TRUE, verbose = TRUE, ...) {
+  if (inherits(x, 'data.frame'))
+    x <- list(ransch = x)
+  
+  if (verbose) {
+    nstrata <- if (length(x) > 1)
+      length(x) else 0
+    nmstrata <- if (nstrata > 0)
+      names(x)
+    arms <- sapply(x, function(y) length(unique(y$Assignment)))
+    n_strata <- sapply(x, nrow)
+    n_total <- sum(n_strata)
+    bl <- sapply(x, function(y)
+      toString(unique(table(y$Block))))
+    
+    message('Total randomized: ', n_total)
+    if (nstrata > 0) {
+      message(
+        sprintf('%s: %s (Block size: %s, Arms: %s)\n',
+                nmstrata, n_strata, bl, arms)
+      )
+    } else {
+      message('Arms: ', toString(arms))
+      message('Block size: ', bl)
+    }
+  }
+  
+  lapply(x, function(x) {
+    res <- table(x[, c('Block', 'Assignment')])
+    if (totals)
+      addmargins(res, 1:2) else res
+  })
+}
+
 ransch_ <- function(n, block, arms, r) {
-  # table(desmon2:::ransch_(12, 6, c('Pbo', 'Trt'), c(1, 1))[, -1])
-  # table(desmon2:::ransch_(15, 5, c('Pbo', 'Ex1', 'Ex2'), c(1, 2, 2))[, -1])
-  stopifnot(
-    length(arms) == length(r),
-    block %% sum(r) == 0L
+  ## table(ransch_(12, 6, c('Pbo', 'Trt'), c(1, 1))[, -1])
+  ## table(ransch_(12, 1:4, c('Pbo', 'Trt'), c(1, 1))[, -1])
+  stopifnot(length(arms) == length(r))
+  
+  sample <- function(x, ...) {
+    x[sample.int(length(x), ...)]
+  }
+  rblock <- function(b, arms, r) {
+    arms <- rep_len(rep(arms, r), b)
+    sample(arms)
+  }
+  
+  block <- block[block %% sum(r) == 0L]
+  block <- sample(block, n, replace = TRUE)
+  idx <- cumsum(block) < n
+  block <- block[c(which(idx), sum(idx) + 1L)]
+  
+  
+  res <- data.frame(
+    Number = seq.int(sum(block)),
+    Block = rep(seq_along(block), block),
+    Assignment = unlist(lapply(block, rblock, arms = arms, r = r))
   )
   
-  arms <- rep_len(rep(arms, r), block)
-  n <- if (n %% block == 0)
-    n else n + block
-  b <- n %/% block
-  x <- c(replicate(b, sample(seq.int(block))))
-  
-  data.frame(
-    Number = seq_along(x),
-    Block = rep(seq.int(b), each = block),
-    Assignment = arms[x]
-  )
+  structure(res, class = c('ransch', class(res)))
 }
