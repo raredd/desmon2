@@ -15,7 +15,7 @@
 #' 
 #' @param p0,pa probability of success under the null and alternative
 #'   hypotheses, respectively
-#' @param n sample size
+#' @param n sample size, a single value or vector
 #' @param r a vector of critical values, typically the minimum number of
 #'   successes required to reject \code{pa}
 #' @param plot logical; if \code{TRUE}, a the sequence of \code{r} versus
@@ -40,17 +40,20 @@
 #' p0 <- 0.1
 #' pa <- 0.3
 #' des <- desmon2:::bin1samp(p0, pa)
-#' bin1samp_power(p0, pa, des['n'], des['r'] + 1L)
-#' 
+#' bin1samp_power(p0, pa, des['n'], des['r'] + 1)
 #' ## compare
 #' des[c('size', 'type2')]
 #' 
 #' bin1samp_power(p0, pa, des['n'], des['r'] + -2:2)
 #' bin1samp_power(p0, pa, des['n'] + 0:1, des['r'] + -2:2)
 #' 
-#' 
 #' ## simulate over critical values
 #' bin1samp_sim(p0, pa, des['n'])
+#' 
+#' des <- desmon2:::bin1samp(pa, p0)
+#' bin1samp_power(pa, p0, des['n'], des['r'])
+#' ## compare
+#' des[c('size', 'type2')]
 #' 
 #' @export
 
@@ -70,6 +73,9 @@ bin1samp_power <- function(p0, pa, n, r) {
     c(type1 = bin1pow_(exp$n[ii], p0, exp$r[ii]),
       type2 = 1 - bin1pow_(exp$n[ii], pa, exp$r[ii]))))
   rownames(res) <- sprintf('n=%s, r=%s', exp$n, exp$r)
+  
+  if (pa < p0)
+    res <- 1 - res
   
   if (nrow(exp) == 1L)
     drop(res) else res

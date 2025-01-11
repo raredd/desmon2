@@ -13,7 +13,7 @@ bin1samp_sim(p0, pa, n, r = seq.int(n), plot = TRUE)
 \item{p0, pa}{probability of success under the null and alternative
 hypotheses, respectively}
 
-\item{n}{sample size}
+\item{n}{sample size, a single value or vector}
 
 \item{r}{a vector of critical values, typically the minimum number of
 successes required to reject \code{pa}}
@@ -45,17 +45,20 @@ only one value is given for each, a vector is returned.
 p0 <- 0.1
 pa <- 0.3
 des <- desmon2:::bin1samp(p0, pa)
-bin1samp_power(p0, pa, des['n'], des['r'] + 1L)
-
+bin1samp_power(p0, pa, des['n'], des['r'] + 1)
 ## compare
 des[c('size', 'type2')]
 
 bin1samp_power(p0, pa, des['n'], des['r'] + -2:2)
 bin1samp_power(p0, pa, des['n'] + 0:1, des['r'] + -2:2)
 
-
 ## simulate over critical values
 bin1samp_sim(p0, pa, des['n'])
+
+des <- desmon2:::bin1samp(pa, p0)
+bin1samp_power(pa, p0, des['n'], des['r'])
+## compare
+des[c('size', 'type2')]
 
 }
 \seealso{
