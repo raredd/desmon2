@@ -303,11 +303,21 @@ ransch_ <- function(n, block, arms, r) {
     sample(arms)
   }
   
-  block <- block[block %% sum(r) == 0L]
-  block <- sample(block, n, replace = TRUE)
+  ok <- block %% sum(r) == 0L
+  if (any(!ok)) {
+    warning(
+      sprintf('removing block sizes (%s) not compatible with r (%s)',
+              toString(block[!ok]), paste0(r, collapse = ':')),
+      call. = FALSE
+    )
+  }
+  block <- block[ok]
+  # block <- sample(block, n, replace = TRUE)
+  block <- if (length(unique(block)) == 1L)
+    rep_len(block, n) else sample(block, n, replace = TRUE)
+  
   idx <- cumsum(block) < n
   block <- block[c(which(idx), sum(idx) + 1L)]
-  
   
   res <- data.frame(
     Number = seq.int(sum(block)),
