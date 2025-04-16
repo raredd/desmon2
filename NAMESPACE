@@ -2,6 +2,8 @@
 
 S3method(print,stat_text)
 S3method(summary,ransch)
+export(accrual)
+export(accrual_months)
 export(b2p_text)
 export(bin1samp_power)
 export(bin1samp_sim)
