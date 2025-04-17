@@ -13,6 +13,7 @@
 #'   unit; note these are expected to be sequential with no gaps, so units with
 #'   0 accrued should be included
 #' @param target the target accrual
+#' @param time0 the accrual at time 0; default is 0
 #' @param start,end,full labels for first, last, and full accrual times; if
 #'   \code{NA} or \code{NULL}, these will not be added
 #' @param pct,col colored (\code{col}) bands for accrual ranges based on
@@ -28,6 +29,10 @@
 #' @param axes logical; if \code{TRUE}, plot axes and box are drawn
 #' @param ... additional arguments passed to \code{plot}
 #' @param dates a vector of \code{\link{Dates}} or a class to be coerced
+#' 
+#' @return
+#' A list with the \code{x} and \code{y} coordinates of the accrual line.
+#' Additionally, the coordinates for polygon(s) for \code{pct}, if given.
 #' 
 #' @examples
 #' ## basic usage
@@ -60,13 +65,20 @@
 #' x <- Sys.Date() + unlist(sapply(seq_along(ac), function(ii)
 #'   30 * ii + rpois(ac[ii], 5)))
 #' ## these are equivalent ways to call accrual with date vectors
-#' accrual(x, ex)
-#' accrual(accrual_months(x), ex)
+#' a1 <- accrual(x, ex)
+#' a2 <- accrual(accrual_months(x), ex)
+#' identical(a1, a2)
+#' 
+#' ## the plot data is returned
+#' plot(
+#'   a1$x, a1$y, ylim = c(0, max(unlist(a1))),
+#'   panel.first = matlines(a1$pct$x, a1$pct[, -1])
+#' )
 #' 
 #' @export
 
 accrual <-
-  function(actual, expected, target = sum(expected),
+  function(actual, expected, target = sum(expected), time0 = 0,
            start = 'Month 0', end = 'Last month', full = 'Full accrual expected',
            pct = c(1, 0.75, 0.25, 0), col = c('yellow', 'orange', 'red'),
            pct.legend = 'Percent of expected', args.pct = list(),
@@ -118,9 +130,9 @@ accrual <-
     if (ok(legend)) {
       if (isTRUE(legend)) {
         legend <- c(
-          'Start Date' = ifelse(missing(start), NA, start),
+          'Start date' = ifelse(missing(start), NA, start),
           'End date' = ifelse(missing(end), NA, end),
-          'Expected' = sum(ye),
+          'Expected accrual' = sum(ye),
           'Expected per month' = round(mean(ye), 1L),
           'Actual to date' = sprintf('%s (%.0f%%)', sum(ya), sum(ya) / sum(ye) * 100),
           'Actual per month' = round(mean(ya), 1)
@@ -139,19 +151,24 @@ accrual <-
       text(pad + d1 + d2, p[4L], p0(legend), adj = c(1, 1.1), xpd = NA)
     }
     
+    co <- NULL
     if (ok(pct)) {
       n <- c(0, ye)
       n <- cumsum(n)
       x <- seq(0, length(n) - 1L)
       pct <- sort(pct, decreasing = TRUE)
       col <- rep_len(col, length(pct))
+      px <- c(x, rev(x))
+      co <- data.frame(x = px)
       
       for (ii in seq_along(pct[-1L])) {
         y <- n * pct[ii]
         z <- n * pct[ii + 1L]
-        polygon(c(x, rev(x)), c(y, rev(z)), col = col[ii], border = NA)
+        py <- c(y, rev(z))
+        polygon(px, py, col = col[ii], border = NA)
         lines(x, y, lwd = 0.25)
         points(x, y, pch = 19L, cex = 0.1)
+        co[, paste0('y', ii)] <- py
       }
       
       leg <- rev(pct) * 100
@@ -177,9 +194,11 @@ accrual <-
     }
     
     ## actual accrual by month
-    points(xa, cumsum(ya), xpd = NA, pch = 18L, type = 'b', cex = 1)
+    x <- c(0, xa)
+    y <- c(time0, cumsum(ya))
+    points(x, y, xpd = NA, pch = 18L, type = 'b')
     
-    invisible(NULL)
+    invisible(list(x = x, y = y, pct = co))
   }
 
 #' @rdname accrual

@@ -9,6 +9,7 @@ accrual(
   actual,
   expected,
   target = sum(expected),
+  time0 = 0,
   start = "Month 0",
   end = "Last month",
   full = "Full accrual expected",
@@ -35,6 +36,8 @@ unit; note these are expected to be sequential with no gaps, so units with
 
 \item{target}{the target accrual}
 
+\item{time0}{the accrual at time 0; default is 0}
+
 \item{start, end, full}{labels for first, last, and full accrual times; if
 \code{NA} or \code{NULL}, these will not be added}
 
@@ -59,6 +62,10 @@ one will be made; use \code{NA} or \code{NULL} to suppress; see examples}
 \item{...}{additional arguments passed to \code{plot}}
 
 \item{dates}{a vector of \code{\link{Dates}} or a class to be coerced}
+}
+\value{
+A list with the \code{x} and \code{y} coordinates of the accrual line.
+Additionally, the coordinates for polygon(s) for \code{pct}, if given.
 }
 \description{
 Plot (unitless but usually monthly) accrual numbers. \code{accrual_months}
@@ -96,7 +103,14 @@ par(op)
 x <- Sys.Date() + unlist(sapply(seq_along(ac), function(ii)
   30 * ii + rpois(ac[ii], 5)))
 ## these are equivalent ways to call accrual with date vectors
-accrual(x, ex)
-accrual(accrual_months(x), ex)
+a1 <- accrual(x, ex)
+a2 <- accrual(accrual_months(x), ex)
+identical(a1, a2)
+
+## the plot data is returned
+plot(
+  a1$x, a1$y, ylim = c(0, max(unlist(a1))),
+  panel.first = matlines(a1$pct$x, a1$pct[, -1])
+)
 
 }
