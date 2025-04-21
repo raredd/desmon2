@@ -132,10 +132,10 @@ accrual <-
         legend <- c(
           'Start date' = ifelse(missing(start), NA, start),
           'End date' = ifelse(missing(end), NA, end),
-          'Expected accrual' = sum(ye),
+          'Expected accrual' = target,
           'Expected per month' = round(mean(ye), 1L),
           'Actual to date' = sprintf('%s (%.0f%%)', sum(ya), sum(ya) / sum(ye) * 100),
-          'Actual per month' = round(mean(ya), 1)
+          'Actual per month' = round(mean(ya), 1L)
         )
         legend <- na.omit(legend)
       }
