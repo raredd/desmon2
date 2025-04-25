@@ -12,11 +12,16 @@
 #' @param actual,expected integer vectors of actual and expected for each time
 #'   unit; note these are expected to be sequential with no gaps, so units with
 #'   0 accrued should be included
-#' @param target the target accrual
-#' @param time0 the accrual at time 0; default is 0
+#' @param target target accrual
+#' @param time0 accrual at time 0; default is 0
+#' @param lag time units to shift the accrual line
+#' @param, col,pch,type arguments controlling the accrual line, passed to
+#'   \code{\link{points}}
 #' @param start,end,full labels for first, last, and full accrual times; if
 #'   \code{NA} or \code{NULL}, these will not be added
-#' @param pct,col colored (\code{col}) bands for accrual ranges based on
+#' @param pos.full for the \code{full} label, \code{pos} value pased to
+#'   \code{\link[text]}
+#' @param pct,fill colored (\code{fill}) bands for accrual ranges based on
 #'   expected accrual; use \code{NA} or \code{NULL} to suppress
 #' @param pct.legend label for \code{pct} legend; use \code{NA} or \code{NULL}
 #'   to suppress
@@ -40,13 +45,19 @@
 #' ac <- rpois(12, 2)
 #' ex <- rep(c(1, 3, 5), times = c(1, 3, 7))
 #' accrual(ac, ex)
-#' accrual(ac, ex, start = 'Jan 2000', legend = TRUE, col = adjustcolor(1:3, 0.5))
+#' accrual(ac, ex, start = 'Jan 2000', legend = TRUE, fill = adjustcolor(1:3, 0.5))
 #' accrual(ac, ex, start = 'Jan 2000', args.pct = list(x = 'topleft'),
-#'         pct = c(1.25, 1, 0.75, 0.5, 0.25), col = topo.colors(4))
+#'         pct = c(1.25, 1, 0.75, 0.5, 0.25), fill = topo.colors(4))
 #' 
 #' ## minimal plot
 #' accrual(ac, ex, pct = NA, start = NA, end = NA, full = NA, xlab = 'Time',
 #'         axes = FALSE, panel.first = {box(); axis(1); axis(2)}, ylim = c(0, 50))
+#' 
+#' ## adding multiple accrual lines
+#' accrual(ac, ex)
+#' accrual(ac * 0.75, col = 'blue')
+#' accrual(ac[1:4], col = 'blue', lag = 6)
+#' points(c(0, seq_along(ac)), c(0, cumsum(ac)), cex = 2)
 #' 
 #' ## adding legends
 #' st <- 'May 2025'
@@ -58,7 +69,8 @@
 #'   'N per month' = round(mean(ac), 1)
 #' )
 #' op <- par(mar = c(5, 5, 2, 5), las = 1L)
-#' accrual(ac, ex, legend = lg, start = st, end = en, col = c(3, 7, 2))
+#' accrual(ac, ex, legend = lg, start = st, end = en, fill = c(3, 7, 2),
+#'         pos.full = 1L)
 #' par(op)
 #' 
 #' ## using a vector of dates
@@ -78,9 +90,12 @@
 #' @export
 
 accrual <-
-  function(actual, expected, target = sum(expected), time0 = 0,
+  function(actual, expected, target = sum(expected),
+           col = par('col'), pch = 18L, type = 'b',
+           time0 = 0, lag = 0,
            start = 'Month 0', end = 'Last month', full = 'Full accrual expected',
-           pct = c(1, 0.75, 0.25, 0), col = c('yellow', 'orange', 'red'),
+           pos.full = 2L,
+           pct = c(1, 0.75, 0.25, 0), fill = c('yellow', 'orange', 'red'),
            pct.legend = 'Percent of expected', args.pct = list(),
            legend = NULL, xlim = NULL, ylim = NULL,
            xlab = NULL, ylab = NULL, ylab2 = NULL, axes = TRUE, ...) {
@@ -97,6 +112,12 @@ accrual <-
     }
     xa <- seq_along(actual)
     ya <- actual
+    if (missing(expected)) {
+      x <- c(0, xa) + lag
+      y <- c(time0, cumsum(ya))
+      points(x, y, xpd = NA, col = col, pch = pch, type = type)
+      return(invisible(list(x = x, y = y, pct = NULL)))
+    }
     xe <- seq_along(expected)
     ye <- expected
     
@@ -157,7 +178,7 @@ accrual <-
       n <- cumsum(n)
       x <- seq(0, length(n) - 1L)
       pct <- sort(pct, decreasing = TRUE)
-      col <- rep_len(col, length(pct))
+      fill <- rep_len(fill, length(pct))
       px <- c(x, rev(x))
       co <- data.frame(x = px)
       
@@ -165,7 +186,7 @@ accrual <-
         y <- n * pct[ii]
         z <- n * pct[ii + 1L]
         py <- c(y, rev(z))
-        polygon(px, py, col = col[ii], border = NA)
+        polygon(px, py, col = fill[ii], border = NA)
         lines(x, y, lwd = 0.25)
         points(x, y, pch = 19L, cex = 0.1)
         co[, paste0('y', ii)] <- py
@@ -178,7 +199,7 @@ accrual <-
           title = pct.legend, xpd = NA,
           x = 0, y = ymax / 2,
           # x = 'bottom', horiz = TRUE, inset = c(0, 0),
-          legend = leg, bty = 'n', fill = col, border = NA
+          legend = leg, bty = 'n', fill = fill, border = NA
         )
         do.call('legend', modifyList(args, args.pct))
       }
@@ -190,13 +211,13 @@ accrual <-
       # points(max(xe), p[3L], pch = 18L, xpd = NA, cex = 1.5)
       pad <- p[3L] * 2
       segments(max(xe), p[3L], max(xe), pad, xpd = NA, lty = 'dashed')
-      text(max(xe), pad, full, xpd = NA, pos = 4L)
+      text(max(xe), pad, full, xpd = NA, pos = pos.full)
     }
     
     ## actual accrual by month
-    x <- c(0, xa)
+    x <- c(0, xa) + lag
     y <- c(time0, cumsum(ya))
-    points(x, y, xpd = NA, pch = 18L, type = 'b')
+    points(x, y, xpd = NA, col = col, pch = pch, type = type)
     
     invisible(list(x = x, y = y, pct = co))
   }

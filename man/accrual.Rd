@@ -9,12 +9,17 @@ accrual(
   actual,
   expected,
   target = sum(expected),
+  col = par("col"),
+  pch = 18L,
+  type = "b",
   time0 = 0,
+  lag = 0,
   start = "Month 0",
   end = "Last month",
   full = "Full accrual expected",
+  pos.full = 2L,
   pct = c(1, 0.75, 0.25, 0),
-  col = c("yellow", "orange", "red"),
+  fill = c("yellow", "orange", "red"),
   pct.legend = "Percent of expected",
   args.pct = list(),
   legend = NULL,
@@ -34,14 +39,19 @@ accrual_months(dates)
 unit; note these are expected to be sequential with no gaps, so units with
 0 accrued should be included}
 
-\item{target}{the target accrual}
+\item{target}{target accrual}
 
-\item{time0}{the accrual at time 0; default is 0}
+\item{time0}{accrual at time 0; default is 0}
+
+\item{lag}{time units to shift the accrual line}
 
 \item{start, end, full}{labels for first, last, and full accrual times; if
 \code{NA} or \code{NULL}, these will not be added}
 
-\item{pct, col}{colored (\code{col}) bands for accrual ranges based on
+\item{pos.full}{for the \code{full} label, \code{pos} value pased to
+\code{\link[text]}}
+
+\item{pct, fill}{colored (\code{fill}) bands for accrual ranges based on
 expected accrual; use \code{NA} or \code{NULL} to suppress}
 
 \item{pct.legend}{label for \code{pct} legend; use \code{NA} or \code{NULL}
@@ -62,6 +72,9 @@ one will be made; use \code{NA} or \code{NULL} to suppress; see examples}
 \item{...}{additional arguments passed to \code{plot}}
 
 \item{dates}{a vector of \code{\link{Dates}} or a class to be coerced}
+
+\item{, }{col,pch,type arguments controlling the accrual line, passed to
+\code{\link{points}}}
 }
 \value{
 A list with the \code{x} and \code{y} coordinates of the accrual line.
@@ -78,13 +91,19 @@ set.seed(1)
 ac <- rpois(12, 2)
 ex <- rep(c(1, 3, 5), times = c(1, 3, 7))
 accrual(ac, ex)
-accrual(ac, ex, start = 'Jan 2000', legend = TRUE, col = adjustcolor(1:3, 0.5))
+accrual(ac, ex, start = 'Jan 2000', legend = TRUE, fill = adjustcolor(1:3, 0.5))
 accrual(ac, ex, start = 'Jan 2000', args.pct = list(x = 'topleft'),
-        pct = c(1.25, 1, 0.75, 0.5, 0.25), col = topo.colors(4))
+        pct = c(1.25, 1, 0.75, 0.5, 0.25), fill = topo.colors(4))
 
 ## minimal plot
 accrual(ac, ex, pct = NA, start = NA, end = NA, full = NA, xlab = 'Time',
         axes = FALSE, panel.first = {box(); axis(1); axis(2)}, ylim = c(0, 50))
+
+## adding multiple accrual lines
+accrual(ac, ex)
+accrual(ac * 0.75, col = 'blue')
+accrual(ac[1:4], col = 'blue', lag = 6)
+points(c(0, seq_along(ac)), c(0, cumsum(ac)), cex = 2)
 
 ## adding legends
 st <- 'May 2025'
@@ -96,7 +115,8 @@ lg <- c(
   'N per month' = round(mean(ac), 1)
 )
 op <- par(mar = c(5, 5, 2, 5), las = 1L)
-accrual(ac, ex, legend = lg, start = st, end = en, col = c(3, 7, 2))
+accrual(ac, ex, legend = lg, start = st, end = en, fill = c(3, 7, 2),
+        pos.full = 1L)
 par(op)
 
 ## using a vector of dates
