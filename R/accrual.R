@@ -13,14 +13,14 @@
 #'   unit; note these are expected to be sequential with no gaps, so units with
 #'   0 accrued should be included
 #' @param target target accrual
+#' @param col,pch,type arguments controlling the accrual line, passed to
+#'   \code{\link{points}}
 #' @param time0 accrual at time 0; default is 0
 #' @param lag time units to shift the accrual line
-#' @param, col,pch,type arguments controlling the accrual line, passed to
-#'   \code{\link{points}}
 #' @param start,end,full labels for first, last, and full accrual times; if
 #'   \code{NA} or \code{NULL}, these will not be added
-#' @param pos.full for the \code{full} label, \code{pos} value pased to
-#'   \code{\link[text]}
+#' @param pos.full for the \code{full} label, \code{pos} value passed to
+#'   \code{\link{text}}
 #' @param pct,fill colored (\code{fill}) bands for accrual ranges based on
 #'   expected accrual; use \code{NA} or \code{NULL} to suppress
 #' @param pct.legend label for \code{pct} legend; use \code{NA} or \code{NULL}

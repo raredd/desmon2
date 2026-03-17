@@ -41,6 +41,9 @@ unit; note these are expected to be sequential with no gaps, so units with
 
 \item{target}{target accrual}
 
+\item{col, pch, type}{arguments controlling the accrual line, passed to
+\code{\link{points}}}
+
 \item{time0}{accrual at time 0; default is 0}
 
 \item{lag}{time units to shift the accrual line}
@@ -48,8 +51,8 @@ unit; note these are expected to be sequential with no gaps, so units with
 \item{start, end, full}{labels for first, last, and full accrual times; if
 \code{NA} or \code{NULL}, these will not be added}
 
-\item{pos.full}{for the \code{full} label, \code{pos} value pased to
-\code{\link[text]}}
+\item{pos.full}{for the \code{full} label, \code{pos} value passed to
+\code{\link{text}}}
 
 \item{pct, fill}{colored (\code{fill}) bands for accrual ranges based on
 expected accrual; use \code{NA} or \code{NULL} to suppress}
@@ -72,9 +75,6 @@ one will be made; use \code{NA} or \code{NULL} to suppress; see examples}
 \item{...}{additional arguments passed to \code{plot}}
 
 \item{dates}{a vector of \code{\link{Dates}} or a class to be coerced}
-
-\item{, }{col,pch,type arguments controlling the accrual line, passed to
-\code{\link{points}}}
 }
 \value{
 A list with the \code{x} and \code{y} coordinates of the accrual line.
