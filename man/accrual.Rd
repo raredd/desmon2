@@ -20,9 +20,10 @@ accrual(
   pos.full = 2L,
   pct = c(1, 0.75, 0.25, 0),
   fill = c("yellow", "orange", "red"),
-  pct.legend = "Percent of expected",
+  pct.title = "Percent of expected",
   args.pct = list(),
   legend = NULL,
+  adj.legend = c(0, 0),
   xlim = NULL,
   ylim = NULL,
   xlab = NULL,
@@ -57,14 +58,17 @@ unit; note these are expected to be sequential with no gaps, so units with
 \item{pct, fill}{colored (\code{fill}) bands for accrual ranges based on
 expected accrual; use \code{NA} or \code{NULL} to suppress}
 
-\item{pct.legend}{label for \code{pct} legend; use \code{NA} or \code{NULL}
+\item{pct.title}{title for \code{pct} legend; use \code{NA} or \code{NULL}
 to suppress}
 
 \item{args.pct}{a \emph{named} list of arguments passed to \code{\link{legend}}
-controlling the \code{pct.legend}}
+controlling the \code{pct} legend}
 
 \item{legend}{optional \emph{named} vector to annotate plot; if \code{TRUE},
 one will be made; use \code{NA} or \code{NULL} to suppress; see examples}
+
+\item{adj.legend}{x- and y-adjustments for the legend position (default
+is top left of the plotting region \code{c(0, par('usr')[4L])})}
 
 \item{xlim, ylim}{the x- and y-axis limits}
 

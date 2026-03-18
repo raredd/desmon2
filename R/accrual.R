@@ -23,12 +23,14 @@
 #'   \code{\link{text}}
 #' @param pct,fill colored (\code{fill}) bands for accrual ranges based on
 #'   expected accrual; use \code{NA} or \code{NULL} to suppress
-#' @param pct.legend label for \code{pct} legend; use \code{NA} or \code{NULL}
+#' @param pct.title title for \code{pct} legend; use \code{NA} or \code{NULL}
 #'   to suppress
 #' @param args.pct a \emph{named} list of arguments passed to \code{\link{legend}}
-#'   controlling the \code{pct.legend}
+#'   controlling the \code{pct} legend
 #' @param legend optional \emph{named} vector to annotate plot; if \code{TRUE},
 #'   one will be made; use \code{NA} or \code{NULL} to suppress; see examples
+#' @param adj.legend x- and y-adjustments for the legend position (default
+#'   is top left of the plotting region \code{c(0, par('usr')[4L])})
 #' @param xlim,ylim the x- and y-axis limits
 #' @param xlab,ylab,ylab2 the x-, y-, and secondary y-axis labels
 #' @param axes logical; if \code{TRUE}, plot axes and box are drawn
@@ -96,8 +98,8 @@ accrual <-
            start = 'Month 0', end = 'Last month', full = 'Full accrual expected',
            pos.full = 2L,
            pct = c(1, 0.75, 0.25, 0), fill = c('yellow', 'orange', 'red'),
-           pct.legend = 'Percent of expected', args.pct = list(),
-           legend = NULL, xlim = NULL, ylim = NULL,
+           pct.title = 'Percent of expected', args.pct = list(),
+           legend = NULL, adj.legend = c(0, 0), xlim = NULL, ylim = NULL,
            xlab = NULL, ylab = NULL, ylab2 = NULL, axes = TRUE, ...) {
     ok <- function(x) {
       !(is.null(x) || all(is.na(x)) || identical(x, FALSE))
@@ -168,8 +170,10 @@ accrual <-
       p0 <- function(x) {
         paste0(x, collapse = '\n')
       }
-      text(0, p[4L], p0(names(legend)), adj = c(0, 1.1), xpd = NA)
-      text(pad + d1 + d2, p[4L], p0(legend), adj = c(1, 1.1), xpd = NA)
+      text(0 + adj.legend[1L], p[4L] + adj.legend[2L], p0(names(legend)),
+           adj = c(0, 1.1), xpd = NA)
+      text(pad + d1 + d2 + adj.legend[1L], p[4L] + adj.legend[2L], p0(legend),
+           adj = c(1, 1.1), xpd = NA)
     }
     
     co <- NULL
@@ -194,9 +198,9 @@ accrual <-
       
       leg <- rev(pct) * 100
       leg <- rev(sprintf('%s - %s', c(0, leg[-length(leg)]), leg)[-1L])
-      if (ok(pct.legend)) {
+      if (ok(pct.title)) {
         args <- list(
-          title = pct.legend, xpd = NA,
+          title = pct.title, xpd = NA,
           x = 0, y = ymax / 2,
           # x = 'bottom', horiz = TRUE, inset = c(0, 0),
           legend = leg, bty = 'n', fill = fill, border = NA
