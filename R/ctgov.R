@@ -1,5 +1,5 @@
 ### ct.gv utils
-# ctae, ctae_table
+# ctae, ctae_table, ctae_report
 ###
 
 
@@ -11,8 +11,12 @@
 #' @param id,toxdesc,toxcat,comment column names with patient IDs, toxicity
 #'   descriptions/terms, toxicity categories/organ systems, and comments/additional
 #'   details (e.g., clarifications for other/specify)
-#' @param sae logical; if \code{TRUE}, result is formatted for reporting SAEs
-#' @param atrisk number of patients at-risk
+#' @param sae logical; if \code{TRUE}, result is formatted for reporting SAEs;
+#'   otherwise, non-SAEs are assumed
+#' @param atrisk number of patients at-risk (for each stratum)
+#' @param strata optional column name defining groups of patients; note that
+#'   for \code{ctae_report}, each unique level of \code{strata} should have
+#'   an \code{atrisk} value
 #' 
 #' @examples
 #' dd <- data.frame(
@@ -22,7 +26,16 @@
 #' )
 #' ae <- ctae(dd)
 #' ae
-#' ctae_table(ae, FALSE, 20)
+#' c1 <- ctae_table(ae, FALSE, 20)
+#' c1
+#' ## alternatively
+#' c2 <- ctae_report(dd, sae = FALSE, atrisk = 20)
+#' c2
+#' identical(c1, c2)
+#' 
+#' ## stratify table to report by cohort
+#' dd$group <- factor(dd$casenum, 1:2, c('Arm A', 'Arm B'))
+#' ctae_report(dd, sae = FALSE, atrisk = c(10, 10), strata = 'group')
 #' 
 #' @export
 
@@ -71,9 +84,37 @@ ctae_table <- function(x, sae, atrisk) {
     organSystemName = x$system,
     sourceVocabulary = NA,
     term = x$term,
-    'Disease Progres{numEvents}' = x$nevent,
-    'Disease Progres{numSubjectsAffected}' = x$npatient,
-    'Disease Progres{numSubjectsAtRisk}' = atrisk,
+    'trunc-arm-name{numEvents}' = x$nevent,
+    'trunc-arm-name{numSubjectsAffected}' = x$npatient,
+    'trunc-arm-name{numSubjectsAtRisk}' = atrisk,
     check.names = FALSE
   )
+}
+
+#' @rdname ctae
+#' @export
+ctae_report <- function(data, id = 'casenum', toxdesc = 'toxdesc', toxcat = 'toxcat',
+                        comment = NULL, sae, atrisk, strata = NULL) {
+  data$...strata <- if (is.null(strata))
+    rep_len(factor('trunc-arm-name'), nrow(data)) else factor(data[, strata])
+  spl <- split(data, data$...strata)
+  stopifnot(
+    'need number at-risk for each group' = length(atrisk) == length(spl)
+  )
+  res <- lapply(seq_along(spl), function(ii) {
+    x <- spl[[ii]]
+    n <- atrisk[ii]
+    l <- unique(as.character(x$...strata))
+    ct <- ctae(x, id, toxdesc, toxcat, comment)
+    ct <- ctae_table(ct, sae, n)
+    names(ct) <- gsub('.*(?=\\{)', l, names(ct), perl = TRUE)
+    ct
+  })
+  
+  ii <- grepl('\\{num', names(res[[1L]]))
+  nn <- names(res[[1L]])[!ii]
+  mm <- Reduce(function(xx, yy) merge(xx, yy, by = nn, all = TRUE), res)
+  ii <- grepl('\\{num', names(mm))
+  mm[, ii][is.na(mm[, ii])] <- 0
+  mm
 }

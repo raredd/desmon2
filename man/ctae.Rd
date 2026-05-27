@@ -3,6 +3,7 @@
 \name{ctae}
 \alias{ctae}
 \alias{ctae_table}
+\alias{ctae_report}
 \title{Clinical trials adverse events}
 \usage{
 ctae(
@@ -14,6 +15,17 @@ ctae(
 )
 
 ctae_table(x, sae, atrisk)
+
+ctae_report(
+  data,
+  id = "casenum",
+  toxdesc = "toxdesc",
+  toxcat = "toxcat",
+  comment = NULL,
+  sae,
+  atrisk,
+  strata = NULL
+)
 }
 \arguments{
 \item{data}{a data frame with adverse events}
@@ -22,9 +34,14 @@ ctae_table(x, sae, atrisk)
 descriptions/terms, toxicity categories/organ systems, and comments/additional
 details (e.g., clarifications for other/specify)}
 
-\item{sae}{logical; if \code{TRUE}, result is formatted for reporting SAEs}
+\item{sae}{logical; if \code{TRUE}, result is formatted for reporting SAEs;
+otherwise, non-SAEs are assumed}
 
-\item{atrisk}{number of patients at-risk}
+\item{atrisk}{number of patients at-risk (for each stratum)}
+
+\item{strata}{optional column name defining groups of patients; note that
+for \code{ctae_report}, each unique level of \code{strata} should have
+an \code{atrisk} value}
 }
 \description{
 Summarize and format adverse events for ct.gov/FDA reporting.
@@ -37,6 +54,15 @@ dd <- data.frame(
 )
 ae <- ctae(dd)
 ae
-ctae_table(ae, FALSE, 20)
+c1 <- ctae_table(ae, FALSE, 20)
+c1
+## alternatively
+c2 <- ctae_report(dd, sae = FALSE, atrisk = 20)
+c2
+identical(c1, c2)
+
+## stratify table to report by cohort
+dd$group <- factor(dd$casenum, 1:2, c('Arm A', 'Arm B'))
+ctae_report(dd, sae = FALSE, atrisk = c(10, 10), strata = 'group')
 
 }
