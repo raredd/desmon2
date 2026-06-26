@@ -86,7 +86,7 @@ ctae_table <- function(x, sae, atrisk) {
     term = x$term,
     'trunc-arm-name{numEvents}' = x$nevent,
     'trunc-arm-name{numSubjectsAffected}' = x$npatient,
-    'trunc-arm-name{numSubjectsAtRisk}' = atrisk,
+    'trunc-arm-name{numSubjectsAtRisk}' = unname(atrisk),
     check.names = FALSE
   )
 }
